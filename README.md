@@ -1,4 +1,4 @@
-# terraform-mode.el
+# terraform-mode.el [![Build Status](https://travis-ci.org/syohex/emacs-terraform-mode.png)](https://travis-ci.org/syohex/emacs-terraform-mode)
 
 Major mode of [Terraform](http://www.terraform.io/) configuration file
 
@@ -6,6 +6,10 @@ Major mode of [Terraform](http://www.terraform.io/) configuration file
 ## Screenshot
 
 ![terraform-mode](image/terraform-mode.png)
+
+#### imenu(`helm-imenu`)
+
+![terraform-mode](image/terraform-mode-imenu.png)
 
 
 ## Features
