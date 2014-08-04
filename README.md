@@ -12,6 +12,11 @@ Major mode of [Terraform](http://www.terraform.io/) configuration file
 ![terraform-mode](image/terraform-mode-imenu.png)
 
 
+## Installation
+
+You can install `terraform-mode.el` from [MELPA](http://melpa.milkbox.net/) by `package.el`.
+
+
 ## Features
 
 - Syntax highlighting
