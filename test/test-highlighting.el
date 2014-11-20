@@ -82,7 +82,7 @@ resource \"aws_security_group\"\"default\" {
     (forward-cursor-on "resource")
     (should (face-at-cursor-p 'font-lock-function-name-face))))
 
-(ert-deftest provider-block ()
+(ert-deftest module-block ()
   "Syntax highlight of `module' block"
 
   (with-terraform-temp-buffer
