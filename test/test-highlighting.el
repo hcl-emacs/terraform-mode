@@ -82,6 +82,30 @@ resource \"aws_security_group\"\"default\" {
     (forward-cursor-on "resource")
     (should (face-at-cursor-p 'font-lock-function-name-face))))
 
+(ert-deftest provider-block ()
+  "Syntax highlight of `module' block"
+
+  (with-terraform-temp-buffer
+    "
+module \"consul\" {
+    source = \"foo\"
+}
+"
+
+    (forward-cursor-on "module")
+    (should (face-at-cursor-p 'font-lock-function-name-face)))
+
+
+  (with-terraform-temp-buffer
+    "
+module     \"consul\" {
+    source = \"foo\"
+}
+"
+
+    (forward-cursor-on "module")
+    (should (face-at-cursor-p 'font-lock-function-name-face))))
+
 (ert-deftest output-block ()
   "Syntax highlight of `output' block"
   (with-terraform-temp-buffer
