@@ -37,7 +37,7 @@
   :group 'terraform)
 
 (defconst terraform--block-regexp
-  "^\\s-*\\(provider\\|resource\\|variable\\|output\\)\\s-+\"")
+  "^\\s-*\\(provider\\|resource\\|module\\|variable\\|output\\)\\s-+\"")
 
 (defconst terraform--provisioner-regexp
   "^\\s-+\\(provisioner\\)\\s-+\"")
@@ -184,6 +184,7 @@
   (setq imenu-generic-expression
         '(("resource" "^resource\\s-+\"[^\"]+\"\\s-+\"\\([^\"]+\\)\"" 1)
           ("provider" "^provider\\s-+\"\\([^\"]+\\)\"" 1)
+          ("module" "^module\\s-+\"\\([^\"]+\\)\"" 1)
           ("variable" "^variable\\s-+\"\\([^\"]+\\)\"" 1)
           ("output" "^output\\s-+\"\\([^\"]+\\)\"" 1)))
   (imenu-add-to-menubar "Index"))
