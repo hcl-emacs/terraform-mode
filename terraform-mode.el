@@ -180,6 +180,10 @@
   (set (make-local-variable 'end-of-defun-function)
        'terraform-end-of-defun)
 
+  ;; electric-mode
+  (set (make-local-variable 'electric-indent-chars)
+       (append "{}[]" electric-indent-chars))
+
   ;; imenu
   (setq imenu-generic-expression
         '(("resource" "^resource\\s-+\"[^\"]+\"\\s-+\"\\([^\"]+\\)\"" 1)
