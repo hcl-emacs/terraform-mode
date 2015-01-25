@@ -1,4 +1,7 @@
 Revision history for terraform-mode.el
 
+Revision 0.02 2015/01/25 syohex
+    - Improve for electric-mode
+
 Revision 0.01 2014/08/04 syohex
     - Initial Release
