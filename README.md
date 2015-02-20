@@ -1,4 +1,4 @@
-# terraform-mode.el [![Build Status](https://travis-ci.org/syohex/emacs-terraform-mode.png)](https://travis-ci.org/syohex/emacs-terraform-mode)
+# terraform-mode.el [![Build Status](https://travis-ci.org/syohex/emacs-terraform-mode.svg)](https://travis-ci.org/syohex/emacs-terraform-mode)
 
 Major mode of [Terraform](http://www.terraform.io/) configuration file
 
