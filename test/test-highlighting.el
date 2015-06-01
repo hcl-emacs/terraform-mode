@@ -154,6 +154,17 @@ resource \"aws_instance\" \"web\" {
     (forward-cursor-on "output")
     (should (face-at-cursor-p 'font-lock-function-name-face))))
 
+(ert-deftest atlas-block ()
+  "Syntax highlight of `atlas' block"
+  (with-terraform-temp-buffer
+    "
+atlas {
+    name = \"foo\"
+}
+"
+    (forward-cursor-on "atlas")
+    (should (face-at-cursor-p 'font-lock-function-name-face))))
+
 (ert-deftest assignment-statement ()
   "Syntax highlight of assignment statement"
   (with-terraform-temp-buffer

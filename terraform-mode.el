@@ -39,6 +39,9 @@
 (defconst terraform--block-regexp
   "^\\s-*\\(provider\\|resource\\|module\\|variable\\|output\\)\\s-+\"")
 
+(defconst terraform--atlas-regexp
+  "^\\s-*\\(atlas\\)\\s-*")
+
 (defconst terraform--provisioner-regexp
   "^\\s-+\\(provisioner\\)\\s-+\"")
 
@@ -59,6 +62,7 @@
 
 (defvar terraform-font-lock-keywords
   `((,terraform--block-regexp 1 font-lock-function-name-face)
+    (,terraform--atlas-regexp 1 font-lock-function-name-face)
     (,terraform--provisioner-regexp 1 font-lock-function-name-face)
     (,terraform--assignment-regexp 1 font-lock-variable-name-face)
     (,terraform--boolean-regexp . font-lock-constant-face)
