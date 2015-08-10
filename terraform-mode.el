@@ -198,7 +198,7 @@
   (imenu-add-to-menubar "Index"))
 
 ;;;###autoload
-(add-to-list 'auto-mode-alist '("\\.tf\\'" . terraform-mode))
+(add-to-list 'auto-mode-alist '("\\.tf\\(vars\\)?\\'" . terraform-mode))
 
 (provide 'terraform-mode)
 
