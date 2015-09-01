@@ -1,5 +1,9 @@
 Revision history for terraform-mode.el
 
+Revision 0.03 2015/09/01 syohex
+    - Change default indent size(Thanks svend)
+      2 indent size is recommended by official developpers
+
 Revision 0.02 2015/01/25 syohex
     - Improve for electric-mode
 
