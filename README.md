@@ -1,4 +1,4 @@
-# terraform-mode.el [![Build Status](https://travis-ci.org/syohex/emacs-terraform-mode.svg)](https://travis-ci.org/syohex/emacs-terraform-mode)
+# terraform-mode.el [![travis badge][travis-badge]][travis-link] [![melpa badge][melpa-badge]][melpa-link] [![melpa stable badge][melpa-stable-badge]][melpa-stable-link]
 
 Major mode of [Terraform](http://www.terraform.io/) configuration file
 
@@ -36,3 +36,10 @@ Indentation size
 (custom-set-variables
  '(terraform-indent-level 4))
 ```
+
+[travis-badge]: https://travis-ci.org/syohex/emacs-terraform-mode.svg
+[travis-link]: https://travis-ci.org/syohex/emacs-terraform-mode
+[melpa-link]: http://melpa.org/#/terraform-mode
+[melpa-stable-link]: http://stable.melpa.org/#/terraform-mode
+[melpa-badge]: http://melpa.org/packages/terraform-mode-badge.svg
+[melpa-stable-badge]: http://stable.melpa.org/packages/terraform-mode-badge.svg
