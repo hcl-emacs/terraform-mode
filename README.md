@@ -26,7 +26,7 @@ You can install `terraform-mode.el` from [MELPA](http://melpa.milkbox.net/) by `
 
 ## Customize Variables
 
-#### `terraform-indent-level`
+#### `terraform-indent-level`(Default: `2`)
 
 Indentation size
 
