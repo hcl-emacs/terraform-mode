@@ -39,11 +39,11 @@ resource \"aws_instance\" \"web\"{
 "
 
     (forward-cursor-on "use")
-    (call-interactively 'terraform-beginning-of-defun)
+    (call-interactively 'hcl-beginning-of-defun)
     (should (looking-at "^variable"))
 
     (forward-cursor-on "^resource")
-    (call-interactively 'terraform-beginning-of-defun)
+    (call-interactively 'hcl-beginning-of-defun)
     (should (looking-at "^variable"))))
 
 (ert-deftest end-of-defun ()
@@ -61,11 +61,11 @@ resource \"aws_instance\" \"web\"{
 "
 
     (forward-cursor-on "use")
-    (call-interactively 'terraform-end-of-defun)
+    (call-interactively 'hcl-end-of-defun)
     (should (looking-at "^# end1"))
 
     (forward-cursor-on "^resource")
-    (call-interactively 'terraform-end-of-defun)
+    (call-interactively 'hcl-end-of-defun)
     (should (eobp))))
 
 ;;; test-command.el ends here
