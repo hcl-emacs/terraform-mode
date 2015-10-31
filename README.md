@@ -14,7 +14,7 @@ Major mode of [Terraform](http://www.terraform.io/) configuration file
 
 ## Installation
 
-You can install `terraform-mode.el` from [MELPA](http://melpa.milkbox.net/) by `package.el`.
+You can install `terraform-mode.el` from [MELPA](https://melpa.org/) by `package.el`.
 
 
 ## Features
@@ -43,7 +43,7 @@ Indentation size
 
 [travis-badge]: https://travis-ci.org/syohex/emacs-terraform-mode.svg
 [travis-link]: https://travis-ci.org/syohex/emacs-terraform-mode
-[melpa-link]: http://melpa.org/#/terraform-mode
-[melpa-stable-link]: http://stable.melpa.org/#/terraform-mode
-[melpa-badge]: http://melpa.org/packages/terraform-mode-badge.svg
-[melpa-stable-badge]: http://stable.melpa.org/packages/terraform-mode-badge.svg
+[melpa-link]: https://melpa.org/#/terraform-mode
+[melpa-stable-link]: https://stable.melpa.org/#/terraform-mode
+[melpa-badge]: https://melpa.org/packages/terraform-mode-badge.svg
+[melpa-stable-badge]: https://stable.melpa.org/packages/terraform-mode-badge.svg
