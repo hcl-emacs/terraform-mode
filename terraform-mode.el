@@ -60,6 +60,7 @@
 
   ;; indentation
   (make-local-variable 'terraform-indent-level)
+  (setq hcl-indent-level terraform-indent-level)
 
   ;; imenu
   (setq imenu-generic-expression
