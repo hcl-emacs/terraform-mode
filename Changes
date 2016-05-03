@@ -1,5 +1,8 @@
 Revision history for terraform-mode.el
 
+Revision 0.05 2016/05/03 syohex
+    - Update hcl-mode version for here document highlighting
+
 Revision 0.04 2015/12/26 syohex
     - Fix indent size issue(#7, #8)
 
