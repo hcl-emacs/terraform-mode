@@ -34,8 +34,7 @@
 
 (defcustom terraform-indent-level 2
   "The tab width to use when indenting."
-  :type 'integer
-  :group 'terraform)
+  :type 'integer)
 
 (defconst terraform--block-regexp
   "^\\s-*\\(provider\\|resource\\|module\\|variable\\|output\\)\\s-+\"")
