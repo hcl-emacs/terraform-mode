@@ -23,7 +23,11 @@
 ;;; Commentary:
 
 ;; Major mode of terraform configuration file. terraform-mode provides
-;; syntax highlighting and indentation function.
+;; syntax highlighting, indentation function and formatting.
+
+;; Format the current buffer with terraform-format-buffer. To always
+;; format terraform buffers when saving, use:
+;;   (add-hook 'terraform-mode-hook #'terraform-format-on-save-mode)
 
 ;;; Code:
 
@@ -53,6 +57,30 @@
     (,terraform--atlas-regexp 1 font-lock-function-name-face)
     (,terraform--provisioner-regexp 1 font-lock-function-name-face)
     ,@hcl-font-lock-keywords))
+
+;;;###autoload
+(defun terraform-format-buffer ()
+  "Rewrite current buffer in a canonical format using terraform fmt."
+  (interactive)
+  (let ((buf (get-buffer-create "*terraform-fmt*")))
+    (if (zerop (call-process-region (point-min) (point-max)
+                                    "terraform" nil buf nil "fmt" "-"))
+        (let ((point (point))
+              (window-start (window-start)))
+          (erase-buffer)
+          (insert-buffer-substring buf)
+          (goto-char point)
+          (set-window-start nil window-start))
+      (message "terraform fmt: %s" (with-current-buffer buf (buffer-string))))
+    (kill-buffer buf)))
+
+;;;###autoload
+(define-minor-mode terraform-format-on-save-mode
+  "Run terraform-format-buffer before saving current buffer."
+  :lighter "fmt"
+  (if terraform-format-on-save-mode
+      (add-hook 'before-save-hook #'terraform-format-buffer nil t)
+    (remove-hook 'before-save-hook #'terraform-format-buffer t)))
 
 ;;;###autoload
 (define-derived-mode terraform-mode hcl-mode "Terraform"
