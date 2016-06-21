@@ -58,7 +58,6 @@
     (,terraform--provisioner-regexp 1 font-lock-function-name-face)
     ,@hcl-font-lock-keywords))
 
-;;;###autoload
 (defun terraform-format-buffer ()
   "Rewrite current buffer in a canonical format using terraform fmt."
   (interactive)
@@ -74,7 +73,6 @@
       (message "terraform fmt: %s" (with-current-buffer buf (buffer-string))))
     (kill-buffer buf)))
 
-;;;###autoload
 (define-minor-mode terraform-format-on-save-mode
   "Run terraform-format-buffer before saving current buffer."
   :lighter ""
