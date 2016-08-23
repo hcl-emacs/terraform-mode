@@ -82,6 +82,29 @@ resource \"aws_security_group\"\"default\" {
     (forward-cursor-on "resource")
     (should (face-at-cursor-p 'font-lock-function-name-face))))
 
+(ert-deftest data-block ()
+  "Syntax highlight of 'data' block"
+
+  (with-terraform-temp-buffer
+      "
+data \"template_file\" \"userdata\" {
+    source = \"foo\"
+}
+"
+
+      (forward-cursor-on "data")
+      (should (face-at-cursor-p 'font-lock-function-name-face)))
+
+  (with-terraform-temp-buffer
+      "
+data   \"template_file\"  \"userdata\"    {
+    source = \"foo\"
+}
+"
+
+      (forward-cursor-on "data")
+      (should (face-at-cursor-p 'font-lock-function-name-face))))
+
 (ert-deftest module-block ()
   "Syntax highlight of `module' block"
 

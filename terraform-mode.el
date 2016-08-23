@@ -44,7 +44,7 @@
   :type 'integer)
 
 (defconst terraform--block-regexp
-  "^\\s-*\\(provider\\|resource\\|module\\|variable\\|output\\)\\s-+\"")
+  "^\\s-*\\(provider\\|resource\\|data\\|module\\|variable\\|output\\)\\s-+\"")
 
 (defconst terraform--atlas-regexp
   "^\\s-*\\(atlas\\)\\s-*")
@@ -93,6 +93,7 @@
   ;; imenu
   (setq imenu-generic-expression
         '(("resource" "^resource\\s-+\"[^\"]+\"\\s-+\"\\([^\"]+\\)\"" 1)
+          ("data" "^data\\s-+\"[^\"]+\"\\s-+\"\\([^\"]+\\)\"" 1)
           ("provider" "^provider\\s-+\"\\([^\"]+\\)\"" 1)
           ("module" "^module\\s-+\"\\([^\"]+\\)\"" 1)
           ("variable" "^variable\\s-+\"\\([^\"]+\\)\"" 1)
