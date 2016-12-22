@@ -53,7 +53,7 @@
   "^\\s-+\\(provisioner\\)\\s-+\"")
 
 (defconst terraform--internal-block-regexp
-  "^\\s-+\\(connection\\|triggers\\|vars\\)\\s-+\{")
+  "^\\s-+\\([^\"\{]+\\)\\s-+\{")
 
 (defvar terraform-font-lock-keywords
   `((,terraform--block-regexp 1 font-lock-keyword-face)
