@@ -1,5 +1,9 @@
 Revision history for terraform-mode.el
 
+Revision 0.06 2017/01/01 syohex
+    - Update hcl-mode version for here document highlighting
+    - Drop older Emacs support
+
 Revision 0.05 2016/05/03 syohex
     - Update hcl-mode version for here document highlighting
 

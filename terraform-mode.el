@@ -1,10 +1,10 @@
 ;;; terraform-mode.el --- Major mode for terraform configuration file -*- lexical-binding: t -*-
 
-;; Copyright (C) 2016 by Syohei YOSHIDA
+;; Copyright (C) 2017 by Syohei YOSHIDA
 
 ;; Author: Syohei YOSHIDA <syohex@gmail.com>
 ;; URL: https://github.com/syohex/emacs-terraform-mode
-;; Version: 0.05
+;; Version: 0.06
 ;; Package-Requires: ((emacs "24.3") (hcl-mode "0.03"))
 
 ;; This program is free software; you can redistribute it and/or modify
