@@ -1,6 +1,6 @@
-;;; test-command.el ---
+;;; test-command.el --- Test for terraform-mode commands
 
-;; Copyright (C) 2014 by Syohei YOSHIDA
+;; Copyright (C) 2017 by Syohei YOSHIDA
 
 ;; Author: Syohei YOSHIDA <syohex@gmail.com>
 

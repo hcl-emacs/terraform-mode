@@ -1,6 +1,6 @@
 ;;; test-highlighting.el --- test for highlighting
 
-;; Copyright (C) 2014 by Syohei YOSHIDA
+;; Copyright (C) 2017 by Syohei YOSHIDA
 
 ;; Author: Syohei YOSHIDA <syohex@gmail.com>
 
