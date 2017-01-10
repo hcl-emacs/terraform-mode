@@ -52,10 +52,14 @@
 (defconst terraform--provisioner-regexp
   "^\\s-+\\(provisioner\\)\\s-+\"")
 
+(defconst terraform--internal-block-regexp
+  "^\\s-+\\([^\"\{]+\\)\\s-+\{")
+
 (defvar terraform-font-lock-keywords
-  `((,terraform--block-regexp 1 font-lock-function-name-face)
-    (,terraform--atlas-regexp 1 font-lock-function-name-face)
-    (,terraform--provisioner-regexp 1 font-lock-function-name-face)
+  `((,terraform--block-regexp 1 font-lock-keyword-face)
+    (,terraform--atlas-regexp 1 font-lock-keyword-face)
+    (,terraform--provisioner-regexp 1 font-lock-keyword-face)
+    (,terraform--internal-block-regexp 1 font-lock-keyword-face)
     ,@hcl-font-lock-keywords))
 
 (defun terraform-format-buffer ()
