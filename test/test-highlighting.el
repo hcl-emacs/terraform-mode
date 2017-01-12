@@ -300,4 +300,22 @@ resource \"aws_security_group\" \"default\" {
     (forward-cursor-on "baz")
     (should (face-at-cursor-p 'font-lock-comment-face))))
 
+(ert-deftest inner-block ()
+  "Syntax highlight of special inner block"
+
+  (with-terraform-temp-buffer
+    "
+provisioner \"file\" {
+    source = \"conf/myapp.conf\"
+    destination = \"/etc/myapp.conf\"
+    connection {
+        type = \"ssh\"
+        user = \"root\"
+        password = \"${var.root_password}\"
+    }
+}"
+
+    (forward-cursor-on "connection")
+    (should (face-at-cursor-p 'font-lock-keyword-face))))
+
 ;;; test-highlighting ends here
