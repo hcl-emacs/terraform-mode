@@ -35,6 +35,10 @@ Indentation size. You need to call `revert-buffer` if you change this value oute
 ```lisp
 (custom-set-variables
  '(terraform-indent-level 4))
+ 
+;; to automatically enter terraform-mode upon entering .tf files 
+;; add this to your init file (.emacs, etc.)
+(add-to-list 'auto-mode-alist '("\\.tf$" . terraform-mode))
 ```
 
 ## See Also
