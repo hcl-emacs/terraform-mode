@@ -22,6 +22,7 @@
 ;;; Code:
 
 (require 'ert)
+(require 'cl-lib)
 (require 'terraform-mode)
 
 (ert-deftest command--beginning-of-defun--from-within-block ()
@@ -95,5 +96,35 @@ resource \"aws_instance\" \"web\"{
     (forward-cursor-on "^resource")
     (call-interactively 'hcl-end-of-defun)
     (should (eobp))))
+
+(ert-deftest command--open-doc--at-resource-def-line ()
+  (with-terraform-temp-buffer
+    "
+resource \"elasticstack_elasticsearch_security_user\" \"filebeat_writer\" {
+    username = \"filebeat_writer\"
+    password = random_password.filebeat_writer.result
+    roles    = [\"filebeat_writer\"]
+    depends_on = [elasticstack_elasticsearch_security_role.filebeat_writer]
+}
+"
+
+    (forward-cursor-on "security_user")
+    (cl-letf (((symbol-function 'terraform--get-resource-provider-namespace) (lambda (prov) "elastic")))
+      (should (equal (terraform--resource-url-at-point) "https://registry.terraform.io/providers/elastic/elasticstack/latest/docs/resources/elasticsearch_security_user")))))
+
+(ert-deftest command--open-doc--in-body ()
+  (with-terraform-temp-buffer
+    "
+resource \"elasticstack_elasticsearch_security_user\" \"filebeat_writer\" {
+    username = \"filebeat_writer\"
+    password = random_password.filebeat_writer.result
+    roles    = [\"filebeat_writer\"]
+    depends_on = [elasticstack_elasticsearch_security_role.filebeat_writer]
+}
+"
+
+    (forward-cursor-on "random_password")
+    (cl-letf (((symbol-function 'terraform--get-resource-provider-namespace) (lambda (prov) "elastic")))
+      (should (equal (terraform--resource-url-at-point) "https://registry.terraform.io/providers/elastic/elasticstack/latest/docs/resources/elasticsearch_security_user")))))
 
 ;;; test-command.el ends here

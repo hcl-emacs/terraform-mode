@@ -35,6 +35,7 @@
 (require 'rx)
 (require 'hcl-mode)
 (require 'dash)
+(require 'thingatpt)
 
 (defgroup terraform nil
   "Major mode of Terraform configuration file."
@@ -230,6 +231,53 @@
 
       (maphash (lambda (k v) (push `(,k ,@v) menu-list)) search-results)
       menu-list)))
+
+(defun terraform--extract-provider (resource-name)
+  "Return the provider associated with a RESOURCE-NAME."
+  (car (split-string resource-name "_")))
+
+(defun terraform--extract-resource (resource-name)
+  "Return the resource associated with a RESOURCE-NAME."
+  (mapconcat #'identity (cdr (split-string resource-name "_")) "_"))
+
+(defun terraform--get-resource-provider-namespace (provider)
+  "Return provider namespace for PROVIDER."
+  (let ((provider-info (shell-command-to-string "terraform providers")))
+    (with-temp-buffer
+      (insert provider-info)
+      (goto-char (point-min))
+      (when (re-search-forward (concat "/\\(.*?\\)/" provider "\\]") nil t)
+        (match-string 1)))))
+
+(defun terraform--resource-url (resource)
+  "Return the url containing the documentation for RESOURCE."
+  (let* ((provider (terraform--extract-provider resource))
+         (provider-ns (terraform--get-resource-provider-namespace provider))
+         (resource-name (terraform--extract-resource resource)))
+    (if provider-ns
+        (format "https://registry.terraform.io/providers/%s/%s/latest/docs/resources/%s"
+                provider-ns
+                provider
+                resource-name)
+      (user-error "Can not determine the provider namespace for %s" provider))))
+
+(defun terraform--resource-url-at-point ()
+  (save-excursion
+    (goto-char (line-beginning-position))
+    (unless (looking-at-p "^resource")
+      (re-search-backward "^resource" nil t))
+    (forward-symbol 2)
+    (terraform--resource-url (thing-at-point 'symbol))))
+
+(defun terraform-open-doc ()
+  "Open a browser at the URL documenting the resource at point."
+  (interactive)
+  (browse-url (terraform--resource-url-at-point)))
+
+(defvar terraform-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-c C-h") #'terraform-open-doc)
+    map))
 
 ;;;###autoload
 (define-derived-mode terraform-mode hcl-mode "Terraform"
