@@ -21,6 +21,7 @@ You can install `terraform-mode.el` from [MELPA](https://melpa.org/) by `package
 - Syntax highlighting
 - Indentation
 - imenu
+- Formatting using `terraform fmt`
 
 
 ## Customize Variables
@@ -28,6 +29,10 @@ You can install `terraform-mode.el` from [MELPA](https://melpa.org/) by `package
 #### `terraform-indent-level`(Default: `2`)
 
 Indentation size. You need to call `revert-buffer` if you change this value outer of hook such as `eval-expression`.
+
+#### `terraform-format-on-save`(Default `nil`)
+
+Set to `t` to automatically format the buffer on save.
 
 ## Sample Configuration
 
