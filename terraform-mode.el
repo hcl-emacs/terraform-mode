@@ -97,7 +97,7 @@
 
   ;; imenu
   (setq imenu-generic-expression
-        '(("resource" "^resource\\s-+\"[^\"]+\"\\s-+\"\\([^\"]+\\)\"" 1)
+        '(("resource" "^resource\\s-+\\(\"[^\"]+\"\\s-+\"[^\"]+\\)\"" 1)
           ("data" "^data\\s-+\"[^\"]+\"\\s-+\"\\([^\"]+\\)\"" 1)
           ("provider" "^provider\\s-+\"\\([^\"]+\\)\"" 1)
           ("module" "^module\\s-+\"\\([^\"]+\\)\"" 1)
