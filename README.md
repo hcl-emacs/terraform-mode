@@ -28,7 +28,7 @@ You can install `terraform-mode.el` from [MELPA](https://melpa.org/) by `package
 
 #### `terraform-indent-level`(Default: `2`)
 
-Indentation size. You need to call `revert-buffer` if you change this value outer of hook such as `eval-expression`.
+Indentation size. You need to call `revert-buffer` if you change this value outside of a hook such as `eval-expression`.
 
 ## Sample Configuration
 
