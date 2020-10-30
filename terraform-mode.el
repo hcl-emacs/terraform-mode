@@ -43,31 +43,35 @@
   "The tab width to use when indenting."
   :type 'integer)
 
-(setq terraform--builtin-blocks '("terraform" "provider" "resrouce" "data" "module" "variable" "output" "locals" "backend"))
+(defconst terraform--builtin-blocks '("terraform" "provider" "resource" "data" "module" "variable" "output" "locals" "backend"))
 
-(setq terraform--builtin-inline '("var" "local" "data" "module"))
+(defconst terraform--builtin-inline '("var" "local" "data" "module"))
 
-(setq terraform--builtin-blocks-regexp
-      (concat "^\\s-*\\(" (string-join terraform--builtin-blocks "\\|") "\\)"))
+(defconst terraform--builtin-blocks-regexp
+      (concat "^\\s-*\\(" (string-join terraform--builtin-blocks "\\|") "\\)\\s-+"))
 
-(setq terraform--builtin-inline-regexp
-  (concat "\\(" (string-join terraform--builtininline) "\\)\\."))
+(defconst terraform--builtin-inline-regexp
+  (concat "\\(" (string-join terraform--builtin-inline "\\|") "\\)\\."))
 
-(setq terraform--resource-regexp
+(defconst terraform--inner-inline-regexp
+  "\\.\\(.*?\\)\\.")
+
+(defconst terraform--resource-regexp
       (concat "^\\s-*\\(" (string-join terraform--builtin-blocks "\\|") "\\)\\s-+\\(\"?.*?\"?\\)\\s-+"))
 
-(setq terraform--atlas-regexp
+(defconst terraform--atlas-regexp
   "^\\s-*\\(atlas\\)\\s-*")
 
-(setq terraform--provisioner-regexp
+(defconst terraform--provisioner-regexp
   "^\\s-+\\(provisioner\\)\\s-+\"")
 
-(setq terraform--inner-block-regexp
+(defconst terraform--inner-block-regexp
   "^\\s-+\\(connection\\)\\s-+{")
 
-(setq terraform-font-lock-keywords
+(defvar terraform-font-lock-keywords
   `((,terraform--builtin-blocks-regexp 1 font-lock-builtin-face)
     (,terraform--builtin-inline-regexp 1 font-lock-builtin-face)
+    (,terraform--inner-inline-regexp 1 font-lock-keyword-face)
     (,terraform--resource-regexp 2 font-lock-keyword-face t)
     (,terraform--atlas-regexp 1 font-lock-function-name-face)
     (,terraform--provisioner-regexp 1 font-lock-function-name-face)
