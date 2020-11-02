@@ -43,39 +43,118 @@
   "The tab width to use when indenting."
   :type 'integer)
 
-(defconst terraform--builtin-blocks '("terraform" "provider" "resource" "data" "module" "variable" "output" "locals" "backend"))
+(defun terraform--list-to-regexp-or-list (list)
+  "Turn input list into a regex or statement.
+Argument LIST input list"
+  (concat "\\(" (string-join list "\\|") "\\)"))
 
-(defconst terraform--builtin-inline '("var" "local" "data" "module"))
+(defface terraform--resource-name-face
+  '((t :foreground "pink"))
+  "Face for resource names."
+  :group 'terraform-mode)
 
-(defconst terraform--builtin-blocks-regexp
-      (concat "^\\s-*\\(" (string-join terraform--builtin-blocks "\\|") "\\)\\s-+"))
+(defvar terraform--resource-name-face 'terraform--resource-name-face)
 
-(defconst terraform--builtin-inline-regexp
-  (concat "\\(" (string-join terraform--builtin-inline "\\|") "\\)\\."))
+(defface terraform--resource-type-face
+  '((t :foreground "medium sea green"))
+  "Face for resource names."
+  :group 'terraform-mode)
 
-(defconst terraform--inner-inline-regexp
-  "\\.\\(.*?\\)\\.")
+(defvar terraform--resource-type-face 'terraform--resource-type-face)
 
-(defconst terraform--resource-regexp
-      (concat "^\\s-*\\(" (string-join terraform--builtin-blocks "\\|") "\\)\\s-+\\(\"?.*?\"?\\)\\s-+"))
+(setq terraform--block-builtins-without-name-or-type
+      '("terraform" "locals" "required_providers"))
 
-(defconst terraform--atlas-regexp
-  "^\\s-*\\(atlas\\)\\s-*")
+(setq terraform--block-builtins-with-name-only
+      '("variable" "module" "output"))
 
-(defconst terraform--provisioner-regexp
-  "^\\s-+\\(provisioner\\)\\s-+\"")
+(setq terraform--block-builtins-with-type-only
+      '("backend" "provider"))
 
-(defconst terraform--inner-block-regexp
-  "^\\s-+\\(connection\\)\\s-+{")
+(setq terraform--block-builtins-with-type-and-name
+      '("resource" "data"))
 
-(defvar terraform-font-lock-keywords
-  `((,terraform--builtin-blocks-regexp 1 font-lock-builtin-face)
-    (,terraform--builtin-inline-regexp 1 font-lock-builtin-face)
-    (,terraform--inner-inline-regexp 1 font-lock-keyword-face)
-    (,terraform--resource-regexp 2 font-lock-keyword-face t)
-    (,terraform--atlas-regexp 1 font-lock-function-name-face)
-    (,terraform--provisioner-regexp 1 font-lock-function-name-face)
-    (,terraform--inner-block-regexp 1 font-lock-keyword-face)
+(setq terraform--inline-reserved-words-with-name
+      '("var" "module" "local"))
+
+(setq terraform--inline-reserved-words-with-type-and-name
+      '("data"))
+
+(setq terraform--builtins
+      (append terraform--block-builtins-without-name-or-type
+	      terraform--block-builtins-with-type-only
+	      terraform--block-builtins-with-name-only
+	      terraform--block-builtins-with-type-and-name))
+
+(setq terraform--block-builtins-regexp
+      (concat "^\\s-*"
+	      (terraform--list-to-regexp-or-list terraform--builtins)
+	      "\\s-+"))
+
+(setq terraform--block-with-type-only-regexp
+      (concat  "^\\s-*"
+	       (terraform--list-to-regexp-or-list terraform--block-builtins-with-type-only)
+	       "\\(.+\\)\\s-+{"))
+
+(setq terraform--block-with-name-only-regexp
+      (concat  "^\\s-*"
+	       (terraform--list-to-regexp-or-list terraform--block-builtins-with-name-only)
+	       "\\s-+\\([^{]+\\)\\s-*{"))
+
+(setq terraform--block-with-type-and-name-regexp--type-highlight
+      (concat "^\\s-*"
+	      (terraform--list-to-regexp-or-list terraform--block-builtins-with-type-and-name)
+	      "\\s-+\\(.*?\\)\\s-+"))
+
+(setq terraform--block-with-type-and-name-regexp--name-highlight
+      (concat terraform--block-with-type-and-name-regexp--type-highlight
+	      "\\(.*?\\)\\s-*{"))
+       
+(setq terraform--inline-reserved-words-with-name-regexp--reserved-word-highlight
+      (concat (terraform--list-to-regexp-or-list terraform--inline-reserved-words-with-name)
+	      "\\."))
+
+(setq terraform--inline-reserved-words-with-name-regexp--name-highlight
+      (concat terraform--inline-reserved-words-with-name-regexp--reserved-word-highlight
+	      "\\(.*?\\)\\(\\.\\|$\\)"))
+
+(setq terraform--inline-reserved-words-with-type-and-name-regexp--reserved-word-highlight
+      (concat (terraform--list-to-regexp-or-list terraform--inline-reserved-words-with-type-and-name)
+	      "\\."))
+
+(setq terraform--inline-reserved-words-with-type-and-name-regexp--type-highlight
+      (concat terraform--inline-reserved-words-with-type-and-name-regexp--reserved-word-highlight
+	      "\\(.*?\\)\\."))
+
+(setq terraform--inline-reserved-words-with-type-and-name-regexp--name-highlight
+      (concat terraform--inline-reserved-words-with-type-and-name-regexp--type-highlight
+	      "\\(.*?\\)\\(\\.\\|\\[\\)"))
+
+(setq terraform--inline-each-regexp
+      "\\(each\\)\\.\\(key\\|value\\)")
+
+(setq terraform--inline-resource-regexp--resource-highlight
+      "=\\s-+\\(.*?\\)\\.")
+
+(setq terraform--inline-resource-regexp--name-highlight
+      (concat terraform--inline-resource-regexp--resource-highlight
+	      "\\(.*?\\)\\(\\.\\|$\\)"))
+	      
+(setq terraform-font-lock-keywords
+      `((,terraform--block-builtins-regexp 1 font-lock-builtin-face)
+	(,terraform--block-with-type-only-regexp 2 terraform--resource-type-face t)
+	(,terraform--block-with-name-only-regexp 2 terraform--resource-name-face t)
+	(,terraform--block-with-type-and-name-regexp--type-highlight 2 terraform--resource-type-face t)
+	(,terraform--block-with-type-and-name-regexp--name-highlight 3 terraform--resource-name-face t)
+	(,terraform--inline-reserved-words-with-name-regexp--reserved-word-highlight 1 font-lock-builtin-face)
+	(,terraform--inline-reserved-words-with-name-regexp--name-highlight 2 terraform--resource-name-face t)
+	(,terraform--inline-reserved-words-with-type-and-name-regexp--reserved-word-highlight 1 font-lock-builtin-face)
+	(,terraform--inline-reserved-words-with-type-and-name-regexp--type-highlight 2 terraform--resource-type-face)
+	(,terraform--inline-reserved-words-with-type-and-name-regexp--name-highlight 3 terraform--resource-name-face)
+	(,terraform--inline-each-regexp 1 font-lock-builtin-face)
+	(,terraform--inline-each-regexp 2 terraform--resource-type-face)
+	(,terraform--inline-resource-regexp--resource-highlight 1 terraform--resource-type-face)
+	(,terraform--inline-resource-regexp--name-highlight 2 terraform--resource-name-face)
     ,@hcl-font-lock-keywords))
 
 (defun terraform-format-buffer ()
