@@ -43,8 +43,22 @@
   "The tab width to use when indenting."
   :type 'integer)
 
+(defun terraform--list-to-regexp-or-list (list)
+  "Turn input list into a regex or statement.
+Argument LIST input list"
+  (concat "\\(" (string-join list "\\|") "\\)"))
+
+(defconst terraform--block-builtins-without-name-or-type
+  '("terraform" "locals" "required_providers"))
+
+(defconst terraform--block-builtins-without-name-or-type-regexp
+  (concat "\\s-*"
+          (terraform--list-to-regexp-or-list terraform--block-builtins-without-name-or-type)
+          "\\s-*{"))
+
 (defvar terraform-font-lock-keywords
-  `(,@hcl-font-lock-keywords))
+  `((,terraform--block-builtins-without-name-or-type-regexp 1 font-lock-builtin-face)
+    ,@hcl-font-lock-keywords))
 
 (defun terraform-format-buffer ()
   "Rewrite current buffer in a canonical format using terraform fmt."
