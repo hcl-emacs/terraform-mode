@@ -43,25 +43,8 @@
   "The tab width to use when indenting."
   :type 'integer)
 
-(defconst terraform--block-regexp
-  "^\\s-*\\(provider\\|resource\\|data\\|module\\|variable\\|output\\)\\s-+\"")
-
-(defconst terraform--atlas-regexp
-  "^\\s-*\\(atlas\\)\\s-*")
-
-(defconst terraform--provisioner-regexp
-  "^\\s-+\\(provisioner\\)\\s-+\"")
-
-(defconst terraform--inner-block-regexp
-  "^\\s-+\\(connection\\)\\s-+{"
-  "Inner special block.")
-
 (defvar terraform-font-lock-keywords
-  `((,terraform--block-regexp 1 font-lock-function-name-face)
-    (,terraform--atlas-regexp 1 font-lock-function-name-face)
-    (,terraform--provisioner-regexp 1 font-lock-function-name-face)
-    (,terraform--inner-block-regexp 1 font-lock-keyword-face)
-    ,@hcl-font-lock-keywords))
+  `(,@hcl-font-lock-keywords))
 
 (defun terraform-format-buffer ()
   "Rewrite current buffer in a canonical format using terraform fmt."
