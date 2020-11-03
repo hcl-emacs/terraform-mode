@@ -43,6 +43,13 @@
   "The tab width to use when indenting."
   :type 'integer)
 
+(defface terraform--resource-type-face
+  '((t :foreground "medium sea green"))
+  "Face for resource names."
+  :group 'terraform-mode)
+
+(defvar terraform--resource-type-face 'terraform--resource-type-face)
+
 (defun terraform--list-to-regexp-or-list (list)
   "Turn input list into a regex or statement.
 Argument LIST input list"
@@ -54,10 +61,24 @@ Argument LIST input list"
 (defconst terraform--block-builtins-without-name-or-type-regexp
   (concat "\\s-*"
           (terraform--list-to-regexp-or-list terraform--block-builtins-without-name-or-type)
-          "\\s-*{"))
+          "[\s-+{]"))
+
+(defconst terraform--block-builtins-with-type-only
+  '("backend" "provider"))
+
+(defconst terraform--block-builtins-with-type-only--builtin-highlight
+  (concat "^\\s-*"
+          (terraform--list-to-regexp-or-list terraform--block-builtins-with-type-only)
+          "\\s-*"))
+
+(defconst terraform--block-builtins-with-type-only--resource-type-highlight
+  (concat terraform--block-builtins-with-type-only--builtin-highlight
+	  "\\s-+\\(.+?\\)[\s-+{]"))
 
 (defvar terraform-font-lock-keywords
   `((,terraform--block-builtins-without-name-or-type-regexp 1 font-lock-builtin-face)
+    (,terraform--block-builtins-with-type-only--builtin-highlight 1 font-lock-builtin-face)
+    (,terraform--block-builtins-with-type-only--resource-type-highlight 2 terraform--resource-type-face t)
     ,@hcl-font-lock-keywords))
 
 (defun terraform-format-buffer ()
