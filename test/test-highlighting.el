@@ -93,7 +93,7 @@ data \"template_file\" \"userdata\" {
 "
 
       (forward-cursor-on "data")
-      (should (face-at-cursor-p 'font-lock-function-name-face)))
+      (should (face-at-cursor-p 'font-lock-builtin-face)))
 
   (with-terraform-temp-buffer
       "
@@ -103,7 +103,7 @@ data   \"template_file\"  \"userdata\"    {
 "
 
       (forward-cursor-on "data")
-      (should (face-at-cursor-p 'font-lock-function-name-face))))
+      (should (face-at-cursor-p 'font-lock-builtin-face))))
 
 (ert-deftest module-block ()
   "Syntax highlight of `module' block"
