@@ -43,7 +43,7 @@ provider \"aws\" {
 "
 
     (forward-cursor-on "provider")
-    (should (face-at-cursor-p 'font-lock-function-name-face)))
+    (should (face-at-cursor-p 'font-lock-builtin-face)))
 
 
   (with-terraform-temp-buffer
@@ -54,7 +54,7 @@ provider     \"aws\" {
 "
 
     (forward-cursor-on "provider")
-    (should (face-at-cursor-p 'font-lock-function-name-face))))
+    (should (face-at-cursor-p 'font-lock-builtin-face))))
 
 (ert-deftest resource-block ()
   "Syntax highlight of `resource' block"
@@ -68,7 +68,7 @@ resource \"aws_security_group\"\"default\" {
 "
 
     (forward-cursor-on "resource")
-    (should (face-at-cursor-p 'font-lock-function-name-face)))
+    (should (face-at-cursor-p 'font-lock-builtin-face)))
 
 
   (with-terraform-temp-buffer
@@ -80,7 +80,7 @@ resource \"aws_security_group\"\"default\" {
 "
 
     (forward-cursor-on "resource")
-    (should (face-at-cursor-p 'font-lock-function-name-face))))
+    (should (face-at-cursor-p 'font-lock-builtin-face))))
 
 (ert-deftest data-block ()
   "Syntax highlight of 'data' block"
@@ -93,7 +93,7 @@ data \"template_file\" \"userdata\" {
 "
 
       (forward-cursor-on "data")
-      (should (face-at-cursor-p 'font-lock-function-name-face)))
+      (should (face-at-cursor-p 'font-lock-builtin-face)))
 
   (with-terraform-temp-buffer
       "
@@ -103,7 +103,7 @@ data   \"template_file\"  \"userdata\"    {
 "
 
       (forward-cursor-on "data")
-      (should (face-at-cursor-p 'font-lock-function-name-face))))
+      (should (face-at-cursor-p 'font-lock-builtin-face))))
 
 (ert-deftest module-block ()
   "Syntax highlight of `module' block"
@@ -116,7 +116,7 @@ module \"consul\" {
 "
 
     (forward-cursor-on "module")
-    (should (face-at-cursor-p 'font-lock-function-name-face)))
+    (should (face-at-cursor-p 'font-lock-builtin-face)))
 
 
   (with-terraform-temp-buffer
@@ -127,7 +127,7 @@ module     \"consul\" {
 "
 
     (forward-cursor-on "module")
-    (should (face-at-cursor-p 'font-lock-function-name-face))))
+    (should (face-at-cursor-p 'font-lock-builtin-face))))
 
 (ert-deftest output-block ()
   "Syntax highlight of `output' block"
@@ -139,7 +139,7 @@ output \"address\" {
 "
 
     (forward-cursor-on "output")
-    (should (face-at-cursor-p 'font-lock-function-name-face)))
+    (should (face-at-cursor-p 'font-lock-builtin-face)))
 
 
   (with-terraform-temp-buffer
@@ -150,7 +150,7 @@ output \"address\" {
 "
 
     (forward-cursor-on "output")
-    (should (face-at-cursor-p 'font-lock-function-name-face))))
+    (should (face-at-cursor-p 'font-lock-builtin-face))))
 
 (ert-deftest provisioner-block ()
   "Syntax highlight of `provisioner' block"
@@ -164,18 +164,7 @@ resource \"aws_instance\" \"web\" {
 "
 
     (forward-cursor-on "provisioner")
-    (should (face-at-cursor-p 'font-lock-function-name-face)))
-
-
-  (with-terraform-temp-buffer
-    "
-   output       \"address\"      {
-         value = \"foobar\"
-   }
-"
-
-    (forward-cursor-on "output")
-    (should (face-at-cursor-p 'font-lock-function-name-face))))
+    (should (face-at-cursor-p 'font-lock-builtin-face))))
 
 (ert-deftest atlas-block ()
   "Syntax highlight of `atlas' block"
@@ -186,7 +175,7 @@ atlas {
 }
 "
     (forward-cursor-on "atlas")
-    (should (face-at-cursor-p 'font-lock-function-name-face))))
+    (should (face-at-cursor-p 'font-lock-builtin-face))))
 
 (ert-deftest assignment-statement ()
   "Syntax highlight of assignment statement"
@@ -316,6 +305,6 @@ provisioner \"file\" {
 }"
 
     (forward-cursor-on "connection")
-    (should (face-at-cursor-p 'font-lock-keyword-face))))
+    (should (face-at-cursor-p 'font-lock-builtin-face))))
 
 ;;; test-highlighting ends here

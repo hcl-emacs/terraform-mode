@@ -43,24 +43,82 @@
   "The tab width to use when indenting."
   :type 'integer)
 
-(defconst terraform--block-regexp
-  "^\\s-*\\(provider\\|resource\\|data\\|module\\|variable\\|output\\)\\s-+\"")
+(defface terraform--resource-type-face
+  '((t :foreground "medium sea green"))
+  "Face for resource names."
+  :group 'terraform-mode)
 
-(defconst terraform--atlas-regexp
-  "^\\s-*\\(atlas\\)\\s-*")
+(defvar terraform--resource-type-face 'terraform--resource-type-face)
 
-(defconst terraform--provisioner-regexp
-  "^\\s-+\\(provisioner\\)\\s-+\"")
+(defface terraform--resource-name-face
+  '((t :foreground "pink"))
+  "Face for resource names."
+  :group 'terraform-mode)
 
-(defconst terraform--inner-block-regexp
-  "^\\s-+\\(connection\\)\\s-+{"
-  "Inner special block.")
+(defvar terraform--resource-name-face 'terraform--resource-name-face)
+
+(defconst terraform--block-builtins-without-name-or-type-regexp
+  (rx line-start
+      (zero-or-more space)
+      (group-n 1 (or "terraform" "locals" "required_providers" "atlas" "connection"))
+      (or (one-or-more space) "{")))
+
+(defconst terraform--block-builtins-with-type-only
+  (rx (or "backend" "provider" "provisioner")))
+
+(defconst terraform--block-builtins-with-type-only--builtin-highlight-regexp
+  (rx line-start
+      (zero-or-more space)
+      (group-n 1 (regexp terraform--block-builtins-with-type-only))
+      (one-or-more space)))
+
+(defconst terraform--block-builtins-with-type-only--resource-type-highlight-regexp
+  (rx (regexp terraform--block-builtins-with-type-only--builtin-highlight-regexp)
+      (group-n 1 (+? (not " ")))
+      (or (one-or-more space) "{")))
+
+(defconst terraform--block-builtins-with-name-only
+  (rx (or "variable" "module" "output")))
+
+(defconst terraform--block-builtins-with-name-only--builtin-highlight-regexp
+  (rx line-start
+      (zero-or-more space)
+      (group-n 1 (regexp terraform--block-builtins-with-name-only))
+      (one-or-more space)))
+
+(defconst terraform--block-builtins-with-name-only--name-highlight-regexp
+  (rx (regexp terraform--block-builtins-with-name-only--builtin-highlight-regexp)
+      (group-n 1 (+? (not " ")))
+      (or (one-or-more space) "{")))
+
+(defconst terraform--block-builtins-with-type-and-name
+  (rx (or "data" "resource")))
+
+(defconst terraform--block-builtins-with-type-and-name--builtin-highlight-regexp
+  (rx line-start
+      (zero-or-more space)
+      (group-n 1 (regexp terraform--block-builtins-with-type-and-name))
+      (one-or-more space)))
+
+(defconst terraform--block-builtins-with-type-and-name--type-highlight-regexp
+  (rx (regexp terraform--block-builtins-with-type-and-name--builtin-highlight-regexp)
+      (group-n 1 (+? (not " ")))
+      (one-or-more space)))
+
+(defconst terraform--block-builtins-with-type-and-name--name-highlight-regexp
+  (rx (regexp terraform--block-builtins-with-type-and-name--type-highlight-regexp)
+      (group-n 1 (+? (not " ")))
+      (or (one-or-more space) "{")))
 
 (defvar terraform-font-lock-keywords
-  `((,terraform--block-regexp 1 font-lock-function-name-face)
-    (,terraform--atlas-regexp 1 font-lock-function-name-face)
-    (,terraform--provisioner-regexp 1 font-lock-function-name-face)
-    (,terraform--inner-block-regexp 1 font-lock-keyword-face)
+  `((,terraform--block-builtins-without-name-or-type-regexp 1 font-lock-builtin-face)
+    (,terraform--block-builtins-with-type-only--builtin-highlight-regexp 1 font-lock-builtin-face)
+    (,terraform--block-builtins-with-type-only--resource-type-highlight-regexp 1 terraform--resource-type-face t)
+    (,terraform--block-builtins-with-name-only--builtin-highlight-regexp 1 font-lock-builtin-face)
+    (,terraform--block-builtins-with-name-only--name-highlight-regexp 1 terraform--resource-name-face t)
+    (,terraform--block-builtins-with-type-and-name--builtin-highlight-regexp 1 font-lock-builtin-face)
+    (,terraform--block-builtins-with-type-and-name--type-highlight-regexp 1 terraform--resource-type-face t)
+    (,terraform--block-builtins-with-type-and-name--name-highlight-regexp 1 terraform--resource-name-face t)
     ,@hcl-font-lock-keywords))
 
 (defun terraform-format-buffer ()
