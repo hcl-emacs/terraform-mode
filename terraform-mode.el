@@ -91,12 +91,34 @@
       (group-n 1 (+? (not " ")))
       (or (one-or-more space) "{")))
 
+(defconst terraform--block-builtins-with-type-and-name
+  (rx (or "data" "resource")))
+
+(defconst terraform--block-builtins-with-type-and-name--builtin-highlight-regexp
+  (rx line-start
+      (zero-or-more space)
+      (group-n 1 (regexp terraform--block-builtins-with-type-and-name))
+      (one-or-more space)))
+
+(defconst terraform--block-builtins-with-type-and-name--type-highlight-regexp
+  (rx (regexp terraform--block-builtins-with-type-and-name--builtin-highlight-regexp)
+      (group-n 1 (+? (not " ")))
+      (one-or-more space)))
+
+(defconst terraform--block-builtins-with-type-and-name--name-highlight-regexp
+  (rx (regexp terraform--block-builtins-with-type-and-name--type-highlight-regexp)
+      (group-n 1 (+? (not " ")))
+      (or (one-or-more space) "{")))
+
 (defvar terraform-font-lock-keywords
   `((,terraform--block-builtins-without-name-or-type-regexp 1 font-lock-builtin-face)
     (,terraform--block-builtins-with-type-only--builtin-highlight-regexp 1 font-lock-builtin-face)
     (,terraform--block-builtins-with-type-only--resource-type-highlight-regexp 1 terraform--resource-type-face t)
     (,terraform--block-builtins-with-name-only--builtin-highlight-regexp 1 font-lock-builtin-face)
     (,terraform--block-builtins-with-name-only--name-highlight-regexp 1 terraform--resource-name-face t)
+    (,terraform--block-builtins-with-type-and-name--builtin-highlight-regexp 1 font-lock-builtin-face)
+    (,terraform--block-builtins-with-type-and-name--type-highlight-regexp 1 terraform--resource-type-face t)
+    (,terraform--block-builtins-with-type-and-name--name-highlight-regexp 1 terraform--resource-name-face t)
     ,@hcl-font-lock-keywords))
 
 (defun terraform-format-buffer ()
