@@ -68,7 +68,7 @@ resource \"aws_security_group\"\"default\" {
 "
 
     (forward-cursor-on "resource")
-    (should (face-at-cursor-p 'font-lock-function-name-face)))
+    (should (face-at-cursor-p 'font-lock-builtin-face)))
 
 
   (with-terraform-temp-buffer
@@ -80,7 +80,7 @@ resource \"aws_security_group\"\"default\" {
 "
 
     (forward-cursor-on "resource")
-    (should (face-at-cursor-p 'font-lock-function-name-face))))
+    (should (face-at-cursor-p 'font-lock-builtin-face))))
 
 (ert-deftest data-block ()
   "Syntax highlight of 'data' block"
