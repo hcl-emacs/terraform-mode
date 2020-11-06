@@ -164,17 +164,6 @@ resource \"aws_instance\" \"web\" {
 "
 
     (forward-cursor-on "provisioner")
-    (should (face-at-cursor-p 'font-lock-function-name-face)))
-
-
-  (with-terraform-temp-buffer
-    "
-   output       \"address\"      {
-         value = \"foobar\"
-   }
-"
-
-    (forward-cursor-on "output")
     (should (face-at-cursor-p 'font-lock-function-name-face))))
 
 (ert-deftest atlas-block ()
