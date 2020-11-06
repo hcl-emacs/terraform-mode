@@ -57,49 +57,47 @@
 
 (defvar terraform--resource-name-face 'terraform--resource-name-face)
 
-(defun terraform--list-to-regexp-or-list (list)
-  "Turn input list into a regex or statement.
-Argument LIST input list"
-  (concat "\\(" (string-join list "\\|") "\\)"))
-
-(defconst terraform--block-builtins-without-name-or-type
-  '("terraform" "locals" "required_providers"))
-
 (defconst terraform--block-builtins-without-name-or-type-regexp
-  (concat "\\s-*"
-          (terraform--list-to-regexp-or-list terraform--block-builtins-without-name-or-type)
-          "[\s-+{]"))
+  (rx line-start
+      (zero-or-more space)
+      (group-n 1 (or "terraform" "locals" "required_providers"))
+      (or (one-or-more space) "{")))
 
 (defconst terraform--block-builtins-with-type-only
-  '("backend" "provider"))
+  (rx (or "backend" "provider")))
 
-(defconst terraform--block-builtins-with-type-only--builtin-highlight
-  (concat "^\\s-*"
-          (terraform--list-to-regexp-or-list terraform--block-builtins-with-type-only)
-          "\\s-*"))
+(defconst terraform--block-builtins-with-type-only--builtin-highlight-regexp
+  (rx line-start
+      (zero-or-more space)
+      (group-n 1 (regexp terraform--block-builtins-with-type-only))
+      (one-or-more space)))
 
-(defconst terraform--block-builtins-with-type-only--resource-type-highlight
-  (concat terraform--block-builtins-with-type-only--builtin-highlight
-	  "\\s-+\\([^\s]+?\\)[\s{]"))
+(defconst terraform--block-builtins-with-type-only--resource-type-highlight-regexp
+  (rx (regexp terraform--block-builtins-with-type-only--builtin-highlight-regexp)
+      (group-n 1 (+? anything))
+      (optional space) "{"))
 
 (defconst terraform--block-builtins-with-name-only
-  '("variable" "module" "output"))
+  (rx (or "variable" "module" "output")))
 
-(defconst terraform--block-builtins-with-name-only--builtin-highlight
-  (concat "^\\s-*"
-	  (terraform--list-to-regexp-or-list terraform--block-builtins-with-name-only)
-	  "\\s-*"))
+(defconst terraform--block-builtins-with-name-only--builtin-highlight-regexp
+  (rx line-start
+      (zero-or-more space)
+      (group-n 1 (regexp terraform--block-builtins-with-name-only))
+      (one-or-more space)))
 
-(defconst terraform--block-builtins-with-name-only--name-highlight
-  (concat terraform--block-builtins-with-name-only--builtin-highlight
-	  "\\s-+\\([^\s]+\\)[\s{]"))
+(defconst terraform--block-builtins-with-name-only--name-highlight-regexp
+  (rx (regexp terraform--block-builtins-with-name-only--builtin-highlight-regexp)
+      (zero-or-more space)
+      (group-n 1 (+? anything))
+      (optional space) "{"))
 
 (defvar terraform-font-lock-keywords
   `((,terraform--block-builtins-without-name-or-type-regexp 1 font-lock-builtin-face)
-    (,terraform--block-builtins-with-type-only--builtin-highlight 1 font-lock-builtin-face)
-    (,terraform--block-builtins-with-type-only--resource-type-highlight 2 terraform--resource-type-face t)
-    (,terraform--block-builtins-with-name-only--builtin-highlight 1 font-lock-builtin-face)
-    (,terraform--block-builtins-with-name-only--name-highlight 2 terraform--resource-name-face t)
+    (,terraform--block-builtins-with-type-only--builtin-highlight-regexp 1 font-lock-builtin-face)
+    (,terraform--block-builtins-with-type-only--resource-type-highlight-regexp 1 terraform--resource-type-face t)
+    (,terraform--block-builtins-with-name-only--builtin-highlight-regexp 1 font-lock-builtin-face)
+    (,terraform--block-builtins-with-name-only--name-highlight-regexp 1 terraform--resource-name-face t)
     ,@hcl-font-lock-keywords))
 
 (defun terraform-format-buffer ()
