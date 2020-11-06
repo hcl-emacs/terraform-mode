@@ -305,6 +305,6 @@ provisioner \"file\" {
 }"
 
     (forward-cursor-on "connection")
-    (should (face-at-cursor-p 'font-lock-keyword-face))))
+    (should (face-at-cursor-p 'font-lock-builtin-face))))
 
 ;;; test-highlighting ends here

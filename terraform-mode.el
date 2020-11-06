@@ -60,7 +60,7 @@
 (defconst terraform--block-builtins-without-name-or-type-regexp
   (rx line-start
       (zero-or-more space)
-      (group-n 1 (or "terraform" "locals" "required_providers" "atlas"))
+      (group-n 1 (or "terraform" "locals" "required_providers" "atlas" "connection"))
       (or (one-or-more space) "{")))
 
 (defconst terraform--block-builtins-with-type-only
