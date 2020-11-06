@@ -43,7 +43,7 @@ provider \"aws\" {
 "
 
     (forward-cursor-on "provider")
-    (should (face-at-cursor-p 'font-lock-function-name-face)))
+    (should (face-at-cursor-p 'font-lock-builtin-face)))
 
 
   (with-terraform-temp-buffer
@@ -54,7 +54,7 @@ provider     \"aws\" {
 "
 
     (forward-cursor-on "provider")
-    (should (face-at-cursor-p 'font-lock-function-name-face))))
+    (should (face-at-cursor-p 'font-lock-builtin-face))))
 
 (ert-deftest resource-block ()
   "Syntax highlight of `resource' block"
