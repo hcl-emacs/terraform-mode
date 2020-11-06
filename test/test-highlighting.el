@@ -139,7 +139,7 @@ output \"address\" {
 "
 
     (forward-cursor-on "output")
-    (should (face-at-cursor-p 'font-lock-function-name-face)))
+    (should (face-at-cursor-p 'font-lock-builtin-face)))
 
 
   (with-terraform-temp-buffer
@@ -150,7 +150,7 @@ output \"address\" {
 "
 
     (forward-cursor-on "output")
-    (should (face-at-cursor-p 'font-lock-function-name-face))))
+    (should (face-at-cursor-p 'font-lock-builtin-face))))
 
 (ert-deftest provisioner-block ()
   "Syntax highlight of `provisioner' block"
