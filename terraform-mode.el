@@ -64,7 +64,7 @@
       (or (one-or-more space) "{")))
 
 (defconst terraform--block-builtins-with-type-only
-  (rx (or "backend" "provider")))
+  (rx (or "backend" "provider" "provisioner")))
 
 (defconst terraform--block-builtins-with-type-only--builtin-highlight-regexp
   (rx line-start

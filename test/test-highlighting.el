@@ -164,7 +164,7 @@ resource \"aws_instance\" \"web\" {
 "
 
     (forward-cursor-on "provisioner")
-    (should (face-at-cursor-p 'font-lock-function-name-face))))
+    (should (face-at-cursor-p 'font-lock-builtin-face))))
 
 (ert-deftest atlas-block ()
   "Syntax highlight of `atlas' block"
