@@ -74,8 +74,8 @@
 
 (defconst terraform--block-builtins-with-type-only--resource-type-highlight-regexp
   (rx (regexp terraform--block-builtins-with-type-only--builtin-highlight-regexp)
-      (group-n 1 (+? anything))
-      (optional space) "{"))
+      (group-n 1 (+? (not " ")))
+      (or (one-or-more space) "{")))
 
 (defconst terraform--block-builtins-with-name-only
   (rx (or "variable" "module" "output")))
@@ -88,9 +88,8 @@
 
 (defconst terraform--block-builtins-with-name-only--name-highlight-regexp
   (rx (regexp terraform--block-builtins-with-name-only--builtin-highlight-regexp)
-      (zero-or-more space)
-      (group-n 1 (+? anything))
-      (optional space) "{"))
+      (group-n 1 (+? (not " ")))
+      (or (one-or-more space) "{")))
 
 (defvar terraform-font-lock-keywords
   `((,terraform--block-builtins-without-name-or-type-regexp 1 font-lock-builtin-face)
