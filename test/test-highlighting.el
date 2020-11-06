@@ -116,7 +116,7 @@ module \"consul\" {
 "
 
     (forward-cursor-on "module")
-    (should (face-at-cursor-p 'font-lock-function-name-face)))
+    (should (face-at-cursor-p 'font-lock-builtin-face)))
 
 
   (with-terraform-temp-buffer
@@ -127,7 +127,7 @@ module     \"consul\" {
 "
 
     (forward-cursor-on "module")
-    (should (face-at-cursor-p 'font-lock-function-name-face))))
+    (should (face-at-cursor-p 'font-lock-builtin-face))))
 
 (ert-deftest output-block ()
   "Syntax highlight of `output' block"
