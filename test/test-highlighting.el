@@ -175,7 +175,7 @@ atlas {
 }
 "
     (forward-cursor-on "atlas")
-    (should (face-at-cursor-p 'font-lock-function-name-face))))
+    (should (face-at-cursor-p 'font-lock-builtin-face))))
 
 (ert-deftest assignment-statement ()
   "Syntax highlight of assignment statement"
