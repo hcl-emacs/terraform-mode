@@ -85,6 +85,12 @@
       (add-hook 'before-save-hook #'terraform-format-buffer nil t)
     (remove-hook 'before-save-hook #'terraform-format-buffer t)))
 
+(rx-define terraform-identifier
+  (seq
+   (optional "\"")
+   (one-or-more (or alphanumeric "_" "-")) ; resource type
+   (optional "\"")))
+
 ;;;###autoload
 (define-derived-mode terraform-mode hcl-mode "Terraform"
   "Major mode for editing terraform configuration file"
@@ -97,8 +103,20 @@
 
   ;; imenu
   (setq imenu-generic-expression
-        '(("resource" "^resource\\s-+\\(\"[^\"]+\"\\s-+\"[^\"]+\"\\)" 1)
-          ("data" "^data\\s-+\\(\"[^\"]+\"\\s-+\"[^\"]+\"\\)" 1)
+        `(("resource" ,(rx bol
+                           "resource"
+                           (one-or-more whitespace)
+                           (group
+                            terraform-identifier
+                            (one-or-more whitespace)
+                            terraform-identifier)) 1)
+          ("data" ,(rx bol
+                       "data"
+                       (one-or-more whitespace)
+                       (group
+                        terraform-identifier
+                        (one-or-more whitespace)
+                        terraform-identifier)) 1)
           ("provider" "^provider\\s-+\"\\([^\"]+\\)\"" 1)
           ("module" "^module\\s-+\"\\([^\"]+\\)\"" 1)
           ("variable" "^variable\\s-+\"\\([^\"]+\\)\"" 1)
