@@ -151,10 +151,10 @@
    (optional "\"")))
 
 (defun terraform--generate-imenu ()
-  (goto-char (point-min))
   (let ((search-results (make-hash-table :test #'equal))
 	(menu-list '()))
     (save-match-data
+      (goto-char (point-min))
       (while (re-search-forward terraform--block-builtins-with-type-only--resource-type-highlight-regexp
 				nil t)
 	(-if-let* ((key (match-string 1))
@@ -164,7 +164,7 @@
 	    (puthash key (push `(,resource-type . ,location) matches) search-results)
 	  (puthash key `((,resource-type . ,location)) search-results)))
 
-
+      (goto-char (point-min))
       (while (re-search-forward terraform--block-builtins-with-name-only--name-highlight-regexp
 				nil t)
 	(-if-let* ((key (match-string 1))
@@ -174,6 +174,7 @@
 	    (puthash key (push `(,resource-name . ,location) matches) search-results)
 	  (puthash key `((,resource-name . ,location)) search-results)))
 
+      (goto-char (point-min))
       (while (re-search-forward terraform--block-builtins-with-type-and-name--name-highlight-regexp
 				nil t)
 	(-if-let* ((key (match-string 1))
