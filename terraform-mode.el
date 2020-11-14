@@ -5,7 +5,7 @@
 ;; Author: Syohei YOSHIDA <syohex@gmail.com>
 ;; URL: https://github.com/syohex/emacs-terraform-mode
 ;; Version: 0.06
-;; Package-Requires: ((emacs "24.3") (hcl-mode "0.03"))
+;; Package-Requires: ((emacs "24.3") (hcl-mode "0.03") (dash "2.17.0"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@
 (require 'cl-lib)
 (require 'rx)
 (require 'hcl-mode)
+(require 'dash) 
 
 (defgroup terraform nil
   "Major mode of Terraform configuration file."
@@ -67,58 +68,58 @@
   (rx (or "backend" "provider" "provisioner")))
 
 (defconst terraform--block-builtins-with-type-only--builtin-highlight-regexp
-  (rx line-start
-      (zero-or-more space)
-      (group-n 1 (regexp terraform--block-builtins-with-type-only))
-      (one-or-more space)))
+  (eval `(rx line-start
+	     (zero-or-more space)
+	     (group-n 1 (regexp ,(eval terraform--block-builtins-with-type-only)))
+	     (one-or-more space))))
 
 (defconst terraform--block-builtins-with-type-only--resource-type-highlight-regexp
-  (rx (regexp terraform--block-builtins-with-type-only--builtin-highlight-regexp)
-      (group-n 1 (+? (not " ")))
-      (or (one-or-more space) "{")))
+  (eval `(rx (regexp ,(eval terraform--block-builtins-with-type-only--builtin-highlight-regexp))
+	     (group-n 2 (+? (not space)))
+	     (or (one-or-more space) "{"))))
 
 (defconst terraform--block-builtins-with-name-only
   (rx (or "variable" "module" "output")))
 
 (defconst terraform--block-builtins-with-name-only--builtin-highlight-regexp
-  (rx line-start
-      (zero-or-more space)
-      (group-n 1 (regexp terraform--block-builtins-with-name-only))
-      (one-or-more space)))
+  (eval `(rx line-start
+	     (zero-or-more space)
+	     (group-n 1 (regexp ,(eval terraform--block-builtins-with-name-only)))
+	     (one-or-more space))))
 
 (defconst terraform--block-builtins-with-name-only--name-highlight-regexp
-  (rx (regexp terraform--block-builtins-with-name-only--builtin-highlight-regexp)
-      (group-n 1 (+? (not " ")))
-      (or (one-or-more space) "{")))
+  (eval `(rx (regexp ,(eval terraform--block-builtins-with-name-only--builtin-highlight-regexp))
+	     (group-n 2 (+? (not space)))
+	     (or (one-or-more space) "{"))))
 
 (defconst terraform--block-builtins-with-type-and-name
   (rx (or "data" "resource")))
 
 (defconst terraform--block-builtins-with-type-and-name--builtin-highlight-regexp
-  (rx line-start
-      (zero-or-more space)
-      (group-n 1 (regexp terraform--block-builtins-with-type-and-name))
-      (one-or-more space)))
+  (eval `(rx line-start
+	     (zero-or-more space)
+	     (group-n 1 (regexp ,(eval terraform--block-builtins-with-type-and-name)))
+	     (one-or-more space))))
 
 (defconst terraform--block-builtins-with-type-and-name--type-highlight-regexp
-  (rx (regexp terraform--block-builtins-with-type-and-name--builtin-highlight-regexp)
-      (group-n 1 (+? (not " ")))
-      (one-or-more space)))
+  (eval `(rx (regexp ,(eval terraform--block-builtins-with-type-and-name--builtin-highlight-regexp))
+	     (group-n 2 (+? (not space)))
+	     (one-or-more space))))
 
 (defconst terraform--block-builtins-with-type-and-name--name-highlight-regexp
-  (rx (regexp terraform--block-builtins-with-type-and-name--type-highlight-regexp)
-      (group-n 1 (+? (not " ")))
-      (or (one-or-more space) "{")))
+  (eval `(rx (regexp ,(eval terraform--block-builtins-with-type-and-name--type-highlight-regexp))
+	     (group-n 3 (+? (not space)))
+	     (or (one-or-more space) "{"))))
 
 (defvar terraform-font-lock-keywords
   `((,terraform--block-builtins-without-name-or-type-regexp 1 font-lock-builtin-face)
     (,terraform--block-builtins-with-type-only--builtin-highlight-regexp 1 font-lock-builtin-face)
-    (,terraform--block-builtins-with-type-only--resource-type-highlight-regexp 1 terraform--resource-type-face t)
+    (,terraform--block-builtins-with-type-only--resource-type-highlight-regexp 2 terraform--resource-type-face t)
     (,terraform--block-builtins-with-name-only--builtin-highlight-regexp 1 font-lock-builtin-face)
-    (,terraform--block-builtins-with-name-only--name-highlight-regexp 1 terraform--resource-name-face t)
+    (,terraform--block-builtins-with-name-only--name-highlight-regexp 2 terraform--resource-name-face t)
     (,terraform--block-builtins-with-type-and-name--builtin-highlight-regexp 1 font-lock-builtin-face)
-    (,terraform--block-builtins-with-type-and-name--type-highlight-regexp 1 terraform--resource-type-face t)
-    (,terraform--block-builtins-with-type-and-name--name-highlight-regexp 1 terraform--resource-name-face t)
+    (,terraform--block-builtins-with-type-and-name--type-highlight-regexp 2 terraform--resource-type-face t)
+    (,terraform--block-builtins-with-type-and-name--name-highlight-regexp 3 terraform--resource-name-face t)
     ,@hcl-font-lock-keywords))
 
 (defun terraform-format-buffer ()
@@ -143,11 +144,42 @@
       (add-hook 'before-save-hook #'terraform-format-buffer nil t)
     (remove-hook 'before-save-hook #'terraform-format-buffer t)))
 
-(rx-define terraform-identifier
-  (seq
-   (optional "\"")
-   (one-or-more (or alphanumeric "_" "-")) ; resource type
-   (optional "\"")))
+(defun terraform--generate-imenu ()
+  (let ((search-results (make-hash-table :test #'equal))
+	(menu-list '()))
+    (save-match-data
+      (goto-char (point-min))
+      (while (re-search-forward terraform--block-builtins-with-type-only--resource-type-highlight-regexp nil t)
+	(-if-let* ((key (match-string 1))
+		   (resource-type (replace-regexp-in-string "\"" "" (match-string 2)))
+		   (location (match-beginning 2))
+		   (matches (gethash (match-string 1) search-results)))
+	    (puthash key (push `(,resource-type . ,location) matches) search-results)
+	  (puthash key `((,resource-type . ,location)) search-results)))
+
+
+      (goto-char (point-min))
+      (while (re-search-forward terraform--block-builtins-with-name-only--name-highlight-regexp nil t)
+	(-if-let* ((key (match-string 1))
+		   (resource-name (replace-regexp-in-string "\"" "" (match-string 2)))
+		   (location (match-beginning 2))
+		   (matches (gethash (match-string 1) search-results)))
+	    (puthash key (push `(,resource-name . ,location) matches) search-results)
+	  (puthash key `((,resource-name . ,location)) search-results)))
+
+      (goto-char (point-min))
+      (while (re-search-forward terraform--block-builtins-with-type-and-name--name-highlight-regexp nil t)
+	(-if-let* ((key (match-string 1))
+		   (resource-name (concat (replace-regexp-in-string "\"" "" (match-string 2))
+					  "/"
+					  (replace-regexp-in-string "\"" "" (match-string 3))))
+		   (location (match-beginning 2))
+		   (matches (gethash (match-string 1) search-results)))
+	    (puthash key (push `(,resource-name . ,location) matches) search-results)
+	  (puthash key `((,resource-name . ,location)) search-results)))
+
+      (maphash (lambda (k v) (push `(,k ,@v) menu-list)) search-results)
+      menu-list)))
 
 ;;;###autoload
 (define-derived-mode terraform-mode hcl-mode "Terraform"
@@ -160,26 +192,9 @@
   (setq hcl-indent-level terraform-indent-level)
 
   ;; imenu
-  (setq imenu-generic-expression
-        `(("resource" ,(rx bol
-                           "resource"
-                           (one-or-more whitespace)
-                           (group
-                            terraform-identifier
-                            (one-or-more whitespace)
-                            terraform-identifier)) 1)
-          ("data" ,(rx bol
-                       "data"
-                       (one-or-more whitespace)
-                       (group
-                        terraform-identifier
-                        (one-or-more whitespace)
-                        terraform-identifier)) 1)
-          ("provider" "^provider\\s-+\"\\([^\"]+\\)\"" 1)
-          ("module" "^module\\s-+\"\\([^\"]+\\)\"" 1)
-          ("variable" "^variable\\s-+\"\\([^\"]+\\)\"" 1)
-          ("output" "^output\\s-+\"\\([^\"]+\\)\"" 1)))
-  (imenu-add-to-menubar "Index"))
+  (setq imenu-sort-function 'imenu--sort-by-name)
+  (setq imenu-create-index-function 'terraform--generate-imenu)
+  (imenu-add-to-menubar "Terraform"))
 
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.tf\\(vars\\)?\\'" . terraform-mode))
