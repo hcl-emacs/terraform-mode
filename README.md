@@ -43,8 +43,8 @@ Indentation size. You need to call `revert-buffer` if you change this value oute
 
 This major-mode inherits from hcl-mode. Most of syntax features, like highlighting, indentation are implemented in hcl-mode.
 
-[travis-badge]: https://travis-ci.org/syohex/emacs-terraform-mode.svg
-[travis-link]: https://travis-ci.org/syohex/emacs-terraform-mode
+[travis-badge]: https://travis-ci.org/emacsorphanage/emacs-terraform-mode.svg
+[travis-link]: https://travis-ci.org/emacsorphanage/emacs-terraform-mode
 [melpa-link]: https://melpa.org/#/terraform-mode
 [melpa-stable-link]: https://stable.melpa.org/#/terraform-mode
 [melpa-badge]: https://melpa.org/packages/terraform-mode-badge.svg
