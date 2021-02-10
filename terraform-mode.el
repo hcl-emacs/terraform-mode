@@ -75,7 +75,7 @@
 
 (defconst terraform--block-builtins-with-type-only--resource-type-highlight-regexp
   (eval `(rx (regexp ,(eval terraform--block-builtins-with-type-only--builtin-highlight-regexp))
-	     (group-n 2 (+? (not space)))
+	     (group-n 2 (+? (not (or " " "\t" "="))))
 	     (or (one-or-more space) "{"))))
 
 (defconst terraform--block-builtins-with-name-only
@@ -113,14 +113,14 @@
 
 (defvar terraform-font-lock-keywords
   `((,terraform--block-builtins-without-name-or-type-regexp 1 font-lock-builtin-face)
-    (,terraform--block-builtins-with-type-only--builtin-highlight-regexp 1 font-lock-builtin-face)
     (,terraform--block-builtins-with-type-only--resource-type-highlight-regexp 2 terraform--resource-type-face t)
     (,terraform--block-builtins-with-name-only--builtin-highlight-regexp 1 font-lock-builtin-face)
     (,terraform--block-builtins-with-name-only--name-highlight-regexp 2 terraform--resource-name-face t)
     (,terraform--block-builtins-with-type-and-name--builtin-highlight-regexp 1 font-lock-builtin-face)
     (,terraform--block-builtins-with-type-and-name--type-highlight-regexp 2 terraform--resource-type-face t)
     (,terraform--block-builtins-with-type-and-name--name-highlight-regexp 3 terraform--resource-name-face t)
-    ,@hcl-font-lock-keywords))
+    ,@hcl-font-lock-keywords
+    (,terraform--block-builtins-with-type-only--builtin-highlight-regexp 1 font-lock-builtin-face)))
 
 (defun terraform-format-buffer ()
   "Rewrite current buffer in a canonical format using terraform fmt."
