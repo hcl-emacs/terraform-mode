@@ -137,6 +137,22 @@
       (message "terraform fmt: %s" (with-current-buffer buf (buffer-string))))
     (kill-buffer buf)))
 
+(defun terraform-format-region ()
+  "Rewrite current region in a canonical format using terraform fmt."
+  (interactive)
+  (let ((buf (get-buffer-create "*terraform-fmt*")))
+    (when (use-region-p)
+    (if (zerop (call-process-region (region-beginning) (region-end)
+                                    "terraform" nil buf nil "fmt" "-"))
+        (let ((point (region-end))
+              (window-start (region-beginning)))
+          (delete-region window-start point)
+          (insert-buffer-substring buf)
+          (goto-char point)
+          (set-window-start nil window-start))
+      (message "terraform fmt: %s" (with-current-buffer buf (buffer-string))))
+    (kill-buffer buf))))
+
 (define-minor-mode terraform-format-on-save-mode
   "Run terraform-format-buffer before saving current buffer."
   :lighter ""
