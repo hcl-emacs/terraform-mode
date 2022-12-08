@@ -198,10 +198,14 @@ foo=\"var\"
   (with-terraform-temp-buffer
     "
     foo=      \"var\"
+    bar = local.baz == 1
 "
 
     (forward-cursor-on "foo")
-    (should (face-at-cursor-p 'font-lock-variable-name-face)))
+    (should (face-at-cursor-p 'font-lock-variable-name-face))
+
+    (forward-cursor-on "baz")
+    (should-not (face-at-cursor-p 'font-lock-variable-name-face)))
 
   (with-terraform-temp-buffer
     "
