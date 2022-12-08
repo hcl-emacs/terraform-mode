@@ -114,7 +114,7 @@
 (defconst terraform--assignment-statement
   (rx line-start
       (zero-or-more space)
-      (group-n 1 (one-or-more any))
+      (group-n 1 (minimal-match (one-or-more any)))
       (zero-or-more space)
       "="))
 
