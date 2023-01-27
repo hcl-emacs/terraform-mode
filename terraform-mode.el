@@ -134,7 +134,7 @@
     (,terraform--block-builtins-with-type-and-name--builtin-highlight-regexp 1 terraform--builtin-face)
     (,terraform--block-builtins-with-type-and-name--type-highlight-regexp 2 terraform--resource-type-face t)
     (,terraform--block-builtins-with-type-and-name--name-highlight-regexp 3 terraform--resource-name-face t)
-    (,terraform--assignment-statement 1 font-lock-variable-name-face t)
+    (,terraform--assignment-statement 1 font-lock-variable-name-face)
     ,@hcl-font-lock-keywords))
 
 (defun terraform-format-buffer ()
