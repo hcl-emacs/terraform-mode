@@ -58,6 +58,13 @@
 
 (defvar terraform--resource-name-face 'terraform--resource-name-face)
 
+(defface terraform--builtin-face
+  '((t :inherit font-lock-builtin-face))
+  "Face for builtins."
+  :group 'terraform-mode)
+
+(defvar terraform--builtin-face 'terraform--builtin-face)
+
 (defconst terraform--block-builtins-without-name-or-type-regexp
   (rx line-start
       (zero-or-more space)
@@ -119,12 +126,12 @@
       "="))
 
 (defvar terraform-font-lock-keywords
-  `((,terraform--block-builtins-without-name-or-type-regexp 1 font-lock-builtin-face)
-    (,terraform--block-builtins-with-type-only--builtin-highlight-regexp 1 font-lock-builtin-face)
+  `((,terraform--block-builtins-without-name-or-type-regexp 1 terraform--builtin-face)
+    (,terraform--block-builtins-with-type-only--builtin-highlight-regexp 1 terraform--builtin-face)
     (,terraform--block-builtins-with-type-only--resource-type-highlight-regexp 2 terraform--resource-type-face t)
-    (,terraform--block-builtins-with-name-only--builtin-highlight-regexp 1 font-lock-builtin-face)
+    (,terraform--block-builtins-with-name-only--builtin-highlight-regexp 1 terraform--builtin-face)
     (,terraform--block-builtins-with-name-only--name-highlight-regexp 2 terraform--resource-name-face t)
-    (,terraform--block-builtins-with-type-and-name--builtin-highlight-regexp 1 font-lock-builtin-face)
+    (,terraform--block-builtins-with-type-and-name--builtin-highlight-regexp 1 terraform--builtin-face)
     (,terraform--block-builtins-with-type-and-name--type-highlight-regexp 2 terraform--resource-type-face t)
     (,terraform--block-builtins-with-type-and-name--name-highlight-regexp 3 terraform--resource-name-face t)
     (,terraform--assignment-statement 1 font-lock-variable-name-face t)
