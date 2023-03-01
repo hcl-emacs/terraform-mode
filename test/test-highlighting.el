@@ -271,6 +271,24 @@ bar = \"${foo}\"
     (forward-cursor-on "foo")
     (should (face-at-cursor-p 'font-lock-comment-face))))
 
+(ert-deftest font-lock--no-variable-assignment-in-comment--single-line ()
+  (with-terraform-temp-buffer
+    "# foo = \"bar\""
+
+    (forward-cursor-on "foo")
+    (should (face-at-cursor-p 'font-lock-comment-face))))
+
+(ert-deftest font-lock--no-variable-assignment-in-comment--backend-s3 ()
+  (with-terraform-temp-buffer
+    "# backend \"s3\" {
+#   bucket = \"somestate\"
+#   key = \"tfstates/terraform.tfstate\"
+#   region = \"us-east-1\"
+# }
+"
+    (forward-cursor-on "bucket")
+    (should (face-at-cursor-p 'font-lock-comment-face))))
+
 (ert-deftest font-lock--map-statement ()
   "Syntax highlight of map"
   (with-terraform-temp-buffer
