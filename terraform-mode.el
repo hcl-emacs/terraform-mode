@@ -165,6 +165,8 @@
               (window-start (window-start)))
           (erase-buffer)
           (insert-buffer-substring buf)
+          (when (/= terraform-indent-level 2)
+            (indent-region (point-min) (point-max)))
           (goto-char point)
           (set-window-start nil window-start))
       (message "terraform fmt: %s" (with-current-buffer buf (buffer-string))))
