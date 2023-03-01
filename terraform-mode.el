@@ -160,7 +160,7 @@
   (interactive)
   (let ((buf (get-buffer-create "*terraform-fmt*")))
     (if (zerop (call-process-region (point-min) (point-max)
-                                    "terraform" nil buf nil "fmt" "-"))
+                                    "terraform" nil buf nil "fmt" "-no-color" "-"))
         (let ((point (point))
               (window-start (window-start)))
           (erase-buffer)
