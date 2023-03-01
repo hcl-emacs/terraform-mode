@@ -22,7 +22,24 @@ You can install `terraform-mode.el` from [MELPA](https://melpa.org/) by `package
 - Indentation
 - imenu
 - Formatting using `terraform fmt`
+- Block folding
 
+### Block folding
+
+`terraform-mode` sets up `outline-mode` variables for block folding.
+To use `outline-mode` for block folding, enable `outline-minor-mode`
+in `terraform-mode-hook`:
+
+``` emacs-lisp
+(add-hook 'terraform-mode-hook #'outline-minor-mode)
+```
+
+You can use `outline-toggle-children` bound to `C-c C-f` to toggle
+visibility of a block at point.
+
+We also provide function `terraform-toggle-or-indent` which
+folds-or-indents.  It is not bound by default, but you can bind it to
+`TAB` or any other key.
 
 ## Customize Variables
 
@@ -36,9 +53,28 @@ Set to `t` to automatically format the buffer on save.
 
 ## Sample Configuration
 
-```lisp
+```emacs-lisp
 (custom-set-variables
  '(terraform-indent-level 4))
+```
+
+With `use-package`
+
+``` emacs-lisp
+(use-package terraform-mode
+  ;; if using straight
+  ;; :straight t
+
+  ;; if using package.el
+  ;; :ensure t
+  :custom (terraform-indent-level 4)
+  :config
+  (defun my-terraform-mode-init ()
+    ;; if you want to use outline-minor-mode
+    ;; (outline-minor-mode 1)
+    )
+
+  (add-hook 'terraform-mode-hook 'my-terraform-mode-init))
 ```
 
 ## See Also

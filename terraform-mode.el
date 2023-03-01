@@ -36,6 +36,7 @@
 (require 'hcl-mode)
 (require 'dash)
 (require 'thingatpt)
+(require 'outline)
 
 (defgroup terraform nil
   "Major mode of Terraform configuration file."
@@ -276,9 +277,45 @@
   (interactive)
   (browse-url (terraform--resource-url-at-point)))
 
+(defun terraform--outline-level ()
+  "Return the depth to which a statement is nested in the outline.
+
+See also `outline-level'."
+  (or (cdr (assoc (match-string 1) outline-heading-alist))
+      (- (match-end 1) (match-beginning 1))))
+
+(defun terraform--setup-outline-mode ()
+  (set (make-local-variable 'outline-level) #'terraform--outline-level)
+
+  (let ((terraform-keywords
+         (list "terraform" "locals" "required_providers" "atlas" "connection"
+               "backend" "provider" "provisioner"
+               "variable" "module" "output"
+               "data" "resource")))
+    (set (make-local-variable 'outline-regexp)
+         (concat
+          "^"
+          (regexp-opt terraform-keywords 'symbols)
+          "[[:blank:]].*{[[:blank:]]*$"))
+    (set (make-local-variable 'outline-heading-alist)
+         (mapcar
+          (lambda (item) (cons item 2))
+          terraform-keywords))))
+
+(defun terraform-toggle-or-indent (&optional arg)
+  "Toggle visibility of block under point or indent.
+
+If the point is not at the heading, call
+`indent-for-tab-command'."
+  (interactive)
+  (if (and outline-minor-mode (outline-on-heading-p))
+      (outline-toggle-children)
+    (indent-for-tab-command arg)))
+
 (defvar terraform-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c C-h") #'terraform-open-doc)
+    (define-key map (kbd "C-c C-f") #'outline-toggle-children)
     map))
 
 ;;;###autoload
@@ -292,6 +329,9 @@
   ;; indentation
   (make-local-variable 'terraform-indent-level)
   (setq hcl-indent-level terraform-indent-level)
+
+  ;; outline
+  (terraform--setup-outline-mode)
 
   ;; imenu
   (setq imenu-sort-function 'imenu--sort-by-name)
