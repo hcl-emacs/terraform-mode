@@ -24,7 +24,7 @@
 (require 'ert)
 (require 'terraform-mode)
 
-(ert-deftest no-indentation ()
+(ert-deftest indentation--no-indentation ()
   "No indentation case"
   (with-terraform-temp-buffer
     "
@@ -36,7 +36,7 @@ bar = \"val2\"
     (call-interactively 'indent-for-tab-command)
     (should (= (current-indentation) 0))))
 
-(ert-deftest no-indentation-with-empty-line ()
+(ert-deftest indentation--no-indentation-with-empty-line ()
   "No indentation case with empty lines"
   (with-terraform-temp-buffer
     "
@@ -49,7 +49,7 @@ bar = \"val2\"
     (call-interactively 'indent-for-tab-command)
     (should (= (current-indentation) 0))))
 
-(ert-deftest no-indentation-into-comment ()
+(ert-deftest indentation--no-indentation-into-comment ()
   "No indentation case into comment"
   (with-terraform-temp-buffer
     "
@@ -64,7 +64,7 @@ bar = \"val2\"
       (call-interactively 'indent-for-tab-command)
       (should (= (current-indentation) cur-indent)))))
 
-(ert-deftest indentation-into-block ()
+(ert-deftest indentation--indentation-into-block--in-provider-block ()
   "Indent into block"
   (with-terraform-temp-buffer
     "
@@ -75,8 +75,10 @@ foo = 10
 
     (forward-cursor-on "foo")
     (call-interactively 'indent-for-tab-command)
-    (should (= (current-indentation) terraform-indent-level)))
+    (should (= (current-indentation) terraform-indent-level))))
 
+
+(ert-deftest indentation--indentation-into-block--in-variable-block ()
   (with-terraform-temp-buffer
     "
 variable \"aws_amis\" {
@@ -86,8 +88,9 @@ foo = 10
 
     (forward-cursor-on "foo")
     (call-interactively 'indent-for-tab-command)
-    (should (= (current-indentation) terraform-indent-level)))
+    (should (= (current-indentation) terraform-indent-level))))
 
+(ert-deftest indentation--indentation-into-block--in-resource-block ()
   (with-terraform-temp-buffer
     "
 resource \"aws_security_group\" \"group\" {
@@ -99,7 +102,7 @@ foo = 10
     (call-interactively 'indent-for-tab-command)
     (should (= (current-indentation) terraform-indent-level))))
 
-(ert-deftest indentation-into-nested-block ()
+(ert-deftest indentation--indentation-into-nested-block ()
   "Indent into nested blocks"
   (with-terraform-temp-buffer
     "
@@ -116,7 +119,7 @@ from_port = 22
       (call-interactively 'indent-for-tab-command)
       (should (= (current-indentation) (+ cur-indent terraform-indent-level))))))
 
-(ert-deftest map-indentation ()
+(ert-deftest indentation--map-indentation ()
   "Indent for map entry"
   (with-terraform-temp-buffer
     "
@@ -129,7 +132,7 @@ key = val
     (call-interactively 'indent-for-tab-command)
     (should (= (current-indentation) terraform-indent-level))))
 
-(ert-deftest array-indentation ()
+(ert-deftest indentation--array-indentation ()
   "Indent for array element"
   (with-terraform-temp-buffer
     "
@@ -142,7 +145,7 @@ array_var [
     (call-interactively 'indent-for-tab-command)
     (should (= (current-indentation) terraform-indent-level))))
 
-(ert-deftest change-indent-size ()
+(ert-deftest indentation--change-indent-size ()
   "Indent for array element"
   (let ((terraform-indent-level 4))
     (with-terraform-temp-buffer

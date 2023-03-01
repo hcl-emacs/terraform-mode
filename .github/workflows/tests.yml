@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        emacs_version: ["26.3", "27.1"]
+        emacs_version: ["26.3", "27.2", "28.2"]
     steps:
       # This command allows us to execute cask below. Refer to issue:
       #  https://github.com/conao3/setup-cask/issues/6
@@ -16,7 +16,7 @@ jobs:
       - uses: conao3/setup-cask@master
         with:
           version: '0.8.4'
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: |
           cask install
           make test
