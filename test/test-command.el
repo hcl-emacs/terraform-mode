@@ -24,7 +24,7 @@
 (require 'ert)
 (require 'terraform-mode)
 
-(ert-deftest beginning-of-defun ()
+(ert-deftest command--beginning-of-defun--from-within-block ()
   "Move to beginning-of-defun"
   (with-terraform-temp-buffer
     "
@@ -40,13 +40,27 @@ resource \"aws_instance\" \"web\"{
 
     (forward-cursor-on "use")
     (call-interactively 'hcl-beginning-of-defun)
-    (should (looking-at "^variable"))
+    (should (looking-at "^variable"))))
+
+(ert-deftest command--beginning-of-defun--from-start-of-another-block ()
+  "Move to beginning-of-defun"
+  (with-terraform-temp-buffer
+    "
+variable \"ami\" {
+    description = \"the AMI to use\"
+}
+
+resource \"aws_instance\" \"web\"{
+    ami = ${variable.ami}
+    count = 2
+}
+"
 
     (forward-cursor-on "^resource")
     (call-interactively 'hcl-beginning-of-defun)
     (should (looking-at "^variable"))))
 
-(ert-deftest end-of-defun ()
+(ert-deftest command--end-of-defun--from-within-block ()
   "Move to end-of-defun"
   (with-terraform-temp-buffer
     "
@@ -62,7 +76,21 @@ resource \"aws_instance\" \"web\"{
 
     (forward-cursor-on "use")
     (call-interactively 'hcl-end-of-defun)
-    (should (looking-at "^# end1"))
+    (should (looking-at "^# end1"))))
+
+(ert-deftest command--end-of-defun--from-start-of-block ()
+  "Move to end-of-defun"
+  (with-terraform-temp-buffer
+    "
+variable \"ami\" {
+    description = \"the AMI to use\"
+}
+# end1
+resource \"aws_instance\" \"web\"{
+    ami = ${variable.ami}
+    count = 2
+}
+"
 
     (forward-cursor-on "^resource")
     (call-interactively 'hcl-end-of-defun)

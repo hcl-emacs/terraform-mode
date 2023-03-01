@@ -24,7 +24,7 @@
 (require 'ert)
 (require 'terraform-mode)
 
-(ert-deftest boolean-keywords ()
+(ert-deftest font-lock--boolean-keywords ()
   "Syntax highlight of `boolean' keywords"
 
   (dolist (keyword '("true" "false" "on" "off" "yes" "no"))
@@ -32,8 +32,8 @@
       keyword
       (should (face-at-cursor-p 'font-lock-constant-face)))))
 
-(ert-deftest provider-block ()
-  "Syntax highlight of `provider' block"
+(ert-deftest font-lock--provider-block--with-one-space ()
+  "Syntax highlight of `provider' block."
 
   (with-terraform-temp-buffer
     "
@@ -43,9 +43,9 @@ provider \"aws\" {
 "
 
     (forward-cursor-on "provider")
-    (should (face-at-cursor-p 'font-lock-builtin-face)))
+    (should (face-at-cursor-p 'terraform-builtin-face))))
 
-
+(ert-deftest font-lock--provider-block--with-multiple-spaces ()
   (with-terraform-temp-buffer
     "
 provider     \"aws\" {
@@ -54,10 +54,10 @@ provider     \"aws\" {
 "
 
     (forward-cursor-on "provider")
-    (should (face-at-cursor-p 'font-lock-builtin-face))))
+    (should (face-at-cursor-p 'terraform-builtin-face))))
 
-(ert-deftest resource-block ()
-  "Syntax highlight of `resource' block"
+(ert-deftest font-lock--resource-block--with-one-space ()
+  "Syntax highlight of `resource' block."
 
   (with-terraform-temp-buffer
     "
@@ -68,9 +68,9 @@ resource \"aws_security_group\"\"default\" {
 "
 
     (forward-cursor-on "resource")
-    (should (face-at-cursor-p 'font-lock-builtin-face)))
+    (should (face-at-cursor-p 'terraform-builtin-face))))
 
-
+(ert-deftest font-lock--resource-block--with-multiple-spaces ()
   (with-terraform-temp-buffer
     "
   resource    \"aws_security_group\"        \"default\"     {
@@ -80,32 +80,33 @@ resource \"aws_security_group\"\"default\" {
 "
 
     (forward-cursor-on "resource")
-    (should (face-at-cursor-p 'font-lock-builtin-face))))
+    (should (face-at-cursor-p 'terraform-builtin-face))))
 
-(ert-deftest data-block ()
+(ert-deftest font-lock--data-block--with-one-space ()
   "Syntax highlight of 'data' block"
 
   (with-terraform-temp-buffer
-      "
+    "
 data \"template_file\" \"userdata\" {
     source = \"foo\"
 }
 "
 
-      (forward-cursor-on "data")
-      (should (face-at-cursor-p 'font-lock-builtin-face)))
+    (forward-cursor-on "data")
+    (should (face-at-cursor-p 'terraform-builtin-face))))
 
+(ert-deftest font-lock--data-block--with-multiple-spaces ()
   (with-terraform-temp-buffer
-      "
+    "
 data   \"template_file\"  \"userdata\"    {
     source = \"foo\"
 }
 "
 
-      (forward-cursor-on "data")
-      (should (face-at-cursor-p 'font-lock-builtin-face))))
+    (forward-cursor-on "data")
+    (should (face-at-cursor-p 'terraform-builtin-face))))
 
-(ert-deftest module-block ()
+(ert-deftest font-lock--module-block--with-single-space ()
   "Syntax highlight of `module' block"
 
   (with-terraform-temp-buffer
@@ -116,9 +117,9 @@ module \"consul\" {
 "
 
     (forward-cursor-on "module")
-    (should (face-at-cursor-p 'font-lock-builtin-face)))
+    (should (face-at-cursor-p 'terraform-builtin-face))))
 
-
+(ert-deftest font-lock--module-block--with-multiple-spaces ()
   (with-terraform-temp-buffer
     "
 module     \"consul\" {
@@ -127,9 +128,9 @@ module     \"consul\" {
 "
 
     (forward-cursor-on "module")
-    (should (face-at-cursor-p 'font-lock-builtin-face))))
+    (should (face-at-cursor-p 'terraform-builtin-face))))
 
-(ert-deftest output-block ()
+(ert-deftest font-lock--output-block--with-single-space ()
   "Syntax highlight of `output' block"
   (with-terraform-temp-buffer
     "
@@ -139,9 +140,9 @@ output \"address\" {
 "
 
     (forward-cursor-on "output")
-    (should (face-at-cursor-p 'font-lock-builtin-face)))
+    (should (face-at-cursor-p 'terraform-builtin-face))))
 
-
+(ert-deftest font-lock--output-block--with-multiple-spaces ()
   (with-terraform-temp-buffer
     "
    output       \"address\"      {
@@ -150,9 +151,9 @@ output \"address\" {
 "
 
     (forward-cursor-on "output")
-    (should (face-at-cursor-p 'font-lock-builtin-face))))
+    (should (face-at-cursor-p 'terraform-builtin-face))))
 
-(ert-deftest provisioner-block ()
+(ert-deftest font-lock--provisioner-block ()
   "Syntax highlight of `provisioner' block"
   (with-terraform-temp-buffer
     "
@@ -164,9 +165,9 @@ resource \"aws_instance\" \"web\" {
 "
 
     (forward-cursor-on "provisioner")
-    (should (face-at-cursor-p 'font-lock-builtin-face))))
+    (should (face-at-cursor-p 'terraform-builtin-face))))
 
-(ert-deftest atlas-block ()
+(ert-deftest font-lock--atlas-block ()
   "Syntax highlight of `atlas' block"
   (with-terraform-temp-buffer
     "
@@ -175,9 +176,9 @@ atlas {
 }
 "
     (forward-cursor-on "atlas")
-    (should (face-at-cursor-p 'font-lock-builtin-face))))
+    (should (face-at-cursor-p 'terraform-builtin-face))))
 
-(ert-deftest assignment-statement ()
+(ert-deftest font-lock--assignment-statement--with-spaces-around-equal-sign ()
   "Syntax highlight of assignment statement"
   (with-terraform-temp-buffer
     "
@@ -185,16 +186,19 @@ foo = \"var\"
 "
 
     (forward-cursor-on "foo")
-    (should (face-at-cursor-p 'font-lock-variable-name-face)))
+    (should (face-at-cursor-p 'terraform-variable-name-face))))
 
+
+(ert-deftest font-lock--assignment-statement--without-spaces-around-equal-sign ()
   (with-terraform-temp-buffer
     "
 foo=\"var\"
 "
 
     (forward-cursor-on "foo")
-    (should (face-at-cursor-p 'font-lock-variable-name-face)))
+    (should (face-at-cursor-p 'terraform-variable-name-face))))
 
+(ert-deftest font-lock--assignment-statement--with-spaces-after-equal-sign ()
   (with-terraform-temp-buffer
     "
     foo=      \"var\"
@@ -202,11 +206,19 @@ foo=\"var\"
 "
 
     (forward-cursor-on "foo")
-    (should (face-at-cursor-p 'font-lock-variable-name-face))
+    (should (face-at-cursor-p 'terraform-variable-name-face))))
+
+(ert-deftest font-lock--assignment-statement--with-eqeq-comparison-value ()
+  (with-terraform-temp-buffer
+    "
+    foo=      \"var\"
+    bar = local.baz == 1
+"
 
     (forward-cursor-on "baz")
-    (should-not (face-at-cursor-p 'font-lock-variable-name-face)))
+    (should-not (face-at-cursor-p 'terraform-variable-name-face))))
 
+(ert-deftest font-lock--assignment-statement--inside-a-map ()
   (with-terraform-temp-buffer
     "
 output \"name\" {
@@ -216,14 +228,22 @@ output \"name\" {
    }
 }
 "
-
-    (forward-cursor-on "bar")
-    (should (face-at-cursor-p 'font-lock-variable-name-face))
-
     (forward-cursor-on "hoge")
-    (should (face-at-cursor-p 'font-lock-variable-name-face))))
+    (should (face-at-cursor-p 'terraform-variable-name-face))))
 
-(ert-deftest string-interpolation ()
+(ert-deftest font-lock--assignment-statement--with-a-builtin-variable ()
+  (with-terraform-temp-buffer
+    "
+module \"test\" {
+  backend = test
+}
+"
+    (forward-cursor-on "backend")
+    (should (face-at-cursor-p 'terraform-variable-name-face))
+    (forward-cursor-on "=")
+    (should (face-at-cursor-p nil))))
+
+(ert-deftest font-lock--string-interpolation ()
   "Syntax highlight of string interpolation"
   (with-terraform-temp-buffer
     "
@@ -235,23 +255,23 @@ bar = \"${foo}\"
     (forward-char 1)
     (should (face-at-cursor-p 'font-lock-variable-name-face))))
 
-(ert-deftest single-line-comment ()
+(ert-deftest font-lock--single-line-comment--at-bol ()
   "Syntax highlight of single line comment"
 
   (with-terraform-temp-buffer
-    "# foo" ;; start from beginning of line
-
-    (forward-cursor-on "foo")
-    (should (face-at-cursor-p 'font-lock-comment-face)))
-
-
-  (with-terraform-temp-buffer
-    "  bar baz # foo  " ;; start from not beggining of line
+    "# foo"
 
     (forward-cursor-on "foo")
     (should (face-at-cursor-p 'font-lock-comment-face))))
 
-(ert-deftest map-statement ()
+(ert-deftest font-lock--single-line-comment--after-statement ()
+  (with-terraform-temp-buffer
+    "  bar baz # foo  "
+
+    (forward-cursor-on "foo")
+    (should (face-at-cursor-p 'font-lock-comment-face))))
+
+(ert-deftest font-lock--map-statement ()
   "Syntax highlight of map"
   (with-terraform-temp-buffer
     "
@@ -266,15 +286,16 @@ resource \"aws_security_group\" \"default\" {
     (forward-cursor-on "ingress")
     (should (face-at-cursor-p 'font-lock-type-face))))
 
-(ert-deftest multiple-line-comment ()
+(ert-deftest font-lock--multiple-line-comment--on-single-line ()
   "Syntax highlight of multiple line comment"
 
   (with-terraform-temp-buffer
     "/* foo */"
 
     (forward-cursor-on "foo")
-    (should (face-at-cursor-p 'font-lock-comment-face)))
+    (should (face-at-cursor-p 'font-lock-comment-face))))
 
+(ert-deftest font-lock--multiple-line-comment--on-multiple-lines ()
   (with-terraform-temp-buffer
     "
 /*
@@ -293,7 +314,7 @@ resource \"aws_security_group\" \"default\" {
     (forward-cursor-on "baz")
     (should (face-at-cursor-p 'font-lock-comment-face))))
 
-(ert-deftest inner-block ()
+(ert-deftest font-lock--inner-block ()
   "Syntax highlight of special inner block"
 
   (with-terraform-temp-buffer
@@ -309,6 +330,6 @@ provisioner \"file\" {
 }"
 
     (forward-cursor-on "connection")
-    (should (face-at-cursor-p 'font-lock-builtin-face))))
+    (should (face-at-cursor-p 'terraform-builtin-face))))
 
 ;;; test-highlighting ends here

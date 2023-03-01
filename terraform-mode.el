@@ -44,26 +44,31 @@
   "The tab width to use when indenting."
   :type 'integer)
 
-(defface terraform--resource-type-face
+(defface terraform-resource-type-face
   '((t :foreground "medium sea green"))
   "Face for resource names."
   :group 'terraform-mode)
 
-(defvar terraform--resource-type-face 'terraform--resource-type-face)
+(define-obsolete-face-alias 'terraform--resource-type-face 'terraform-resource-type-face "1.0.0")
 
-(defface terraform--resource-name-face
+(defface terraform-resource-name-face
   '((t :foreground "pink"))
   "Face for resource names."
   :group 'terraform-mode)
 
-(defvar terraform--resource-name-face 'terraform--resource-name-face)
+(define-obsolete-face-alias 'terraform--resource-name-face 'terraform-resource-name-face "1.0.0")
 
-(defface terraform--builtin-face
+(defface terraform-builtin-face
   '((t :inherit font-lock-builtin-face))
   "Face for builtins."
   :group 'terraform-mode)
 
-(defvar terraform--builtin-face 'terraform--builtin-face)
+(define-obsolete-face-alias 'terraform--builtin-face 'terraform-builtin-face "1.0.0")
+
+(defface terraform-variable-name-face
+  '((t :inherit font-lock-variable-name-face))
+  "Face for varriables."
+  :group 'terraform-mode)
 
 (defconst terraform--block-builtins-without-name-or-type-regexp
   (rx line-start
@@ -82,8 +87,8 @@
 
 (defconst terraform--block-builtins-with-type-only--resource-type-highlight-regexp
   (eval `(rx (regexp ,(eval terraform--block-builtins-with-type-only--builtin-highlight-regexp))
-         (group-n 2 (+? (not space)))
-         (or (one-or-more space) "{"))))
+             (group-n 2 (and (not (any "=")) (+? (not space))))
+             (or (one-or-more space) "{"))))
 
 (defconst terraform--block-builtins-with-name-only
   (rx (or "variable" "module" "output")))
@@ -126,15 +131,22 @@
       "="))
 
 (defvar terraform-font-lock-keywords
-  `((,terraform--block-builtins-without-name-or-type-regexp 1 terraform--builtin-face)
-    (,terraform--block-builtins-with-type-only--builtin-highlight-regexp 1 terraform--builtin-face)
-    (,terraform--block-builtins-with-type-only--resource-type-highlight-regexp 2 terraform--resource-type-face t)
-    (,terraform--block-builtins-with-name-only--builtin-highlight-regexp 1 terraform--builtin-face)
-    (,terraform--block-builtins-with-name-only--name-highlight-regexp 2 terraform--resource-name-face t)
-    (,terraform--block-builtins-with-type-and-name--builtin-highlight-regexp 1 terraform--builtin-face)
-    (,terraform--block-builtins-with-type-and-name--type-highlight-regexp 2 terraform--resource-type-face t)
-    (,terraform--block-builtins-with-type-and-name--name-highlight-regexp 3 terraform--resource-name-face t)
-    (,terraform--assignment-statement 1 font-lock-variable-name-face)
+  `((,terraform--assignment-statement 1 'terraform-variable-name-face)
+    (,terraform--block-builtins-without-name-or-type-regexp 1 'terraform-builtin-face)
+    (,terraform--block-builtins-with-type-only--builtin-highlight-regexp 1 'terraform-builtin-face)
+    (,terraform--block-builtins-with-type-only--resource-type-highlight-regexp
+     (1 'terraform-builtin-face)
+     (2 'terraform-resource-type-face t))
+    (,terraform--block-builtins-with-name-only--builtin-highlight-regexp 1 'terraform-builtin-face)
+    (,terraform--block-builtins-with-name-only--name-highlight-regexp
+     (1 'terraform-builtin-face)
+     (2 'terraform-resource-name-face t))
+    (,terraform--block-builtins-with-type-and-name--builtin-highlight-regexp 1 'terraform-builtin-face)
+    (,terraform--block-builtins-with-type-and-name--type-highlight-regexp 2 'terraform-resource-type-face t)
+    (,terraform--block-builtins-with-type-and-name--name-highlight-regexp
+     (1 'terraform-builtin-face)
+     (2 'terraform-resource-type-face t)
+     (3 'terraform-resource-name-face t))
     ,@hcl-font-lock-keywords))
 
 (defun terraform-format-buffer ()
