@@ -52,14 +52,14 @@
   :group 'terraform-mode)
 
 (defface terraform-resource-type-face
-  '((t :foreground "medium sea green"))
+  '((t :inherit font-lock-type-face))
   "Face for resource names."
   :group 'terraform-mode)
 
 (define-obsolete-face-alias 'terraform--resource-type-face 'terraform-resource-type-face "1.0.0")
 
 (defface terraform-resource-name-face
-  '((t :foreground "pink"))
+  '((t :inherit font-lock-function-name-face))
   "Face for resource names."
   :group 'terraform-mode)
 
