@@ -252,25 +252,30 @@
       (when (re-search-forward (concat "/\\(.*?\\)/" provider "\\]") nil t)
         (match-string 1)))))
 
-(defun terraform--resource-url (resource)
-  "Return the url containing the documentation for RESOURCE."
+(defun terraform--resource-url (resource doc-dir)
+  "Return the url containing the documentation for RESOURCE using DOC-DIR."
   (let* ((provider (terraform--extract-provider resource))
          (provider-ns (terraform--get-resource-provider-namespace provider))
          (resource-name (terraform--extract-resource resource)))
     (if provider-ns
-        (format "https://registry.terraform.io/providers/%s/%s/latest/docs/resources/%s"
+        (format "https://registry.terraform.io/providers/%s/%s/latest/docs/%s/%s"
                 provider-ns
                 provider
+                doc-dir
                 resource-name)
       (user-error "Can not determine the provider namespace for %s" provider))))
 
 (defun terraform--resource-url-at-point ()
   (save-excursion
     (goto-char (line-beginning-position))
-    (unless (looking-at-p "^resource")
-      (re-search-backward "^resource" nil t))
-    (forward-symbol 2)
-    (terraform--resource-url (thing-at-point 'symbol))))
+    (unless (looking-at-p "^resource\\|^data")
+      (re-search-backward "^resource\\|^data" nil t))
+    (let (doc-dir)
+      (if (equal (thing-at-point 'word) "data")
+          (setq doc-dir "data-sources")
+          (setq doc-dir "resources"))
+      (forward-symbol 2)
+      (terraform--resource-url (thing-at-point 'symbol) doc-dir))))
 
 (defun terraform-open-doc ()
   "Open a browser at the URL documenting the resource at point."

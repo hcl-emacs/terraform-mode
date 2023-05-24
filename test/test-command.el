@@ -112,6 +112,20 @@ resource \"elasticstack_elasticsearch_security_user\" \"filebeat_writer\" {
     (cl-letf (((symbol-function 'terraform--get-resource-provider-namespace) (lambda (prov) "elastic")))
       (should (equal (terraform--resource-url-at-point) "https://registry.terraform.io/providers/elastic/elasticstack/latest/docs/resources/elasticsearch_security_user")))))
 
+(ert-deftest command--open-doc--at-data-resource-def-line ()
+  (with-terraform-temp-buffer
+    "
+data \"aws_subnets\" \"example\" {
+  filter {
+    name   = \"vpc-id\"
+    values = [var.vpc_id]
+  }
+}
+"
+    (forward-cursor-on "subnets")
+    (cl-letf (((symbol-function 'terraform--get-resource-provider-namespace) (lambda (prov) "hashicorp")))
+      (should (equal (terraform--resource-url-at-point) "https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets")))))
+
 (ert-deftest command--open-doc--in-body ()
   (with-terraform-temp-buffer
     "
