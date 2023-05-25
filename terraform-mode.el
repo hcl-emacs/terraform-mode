@@ -271,7 +271,7 @@
     (unless (looking-at-p "^resource\\|^data")
       (re-search-backward "^resource\\|^data" nil t))
     (let (doc-dir)
-      (if (equal (thing-at-point 'word) "data")
+      (if (equal (word-at-point) "data")
           (setq doc-dir "data-sources")
           (setq doc-dir "resources"))
       (forward-symbol 2)
