@@ -23,6 +23,7 @@ You can install `terraform-mode.el` from [MELPA](https://melpa.org/) by `package
 - imenu
 - Formatting using `terraform fmt`
 - Block folding
+- easier access to Terraform resource documentation
 
 ### Block folding
 
@@ -40,6 +41,11 @@ visibility of a block at point.
 We also provide function `terraform-toggle-or-indent` which
 folds-or-indents.  It is not bound by default, but you can bind it to
 `TAB` or any other key.
+
+### Access to Terraform resource documentation
+
+Within a `resource` or a `data` block, type `C-c C-h` to open a new
+browser tab with the resource or data documentation page.
 
 ## Customize Variables
 
