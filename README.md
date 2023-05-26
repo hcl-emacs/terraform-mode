@@ -49,6 +49,9 @@ browser tab with the resource or data documentation page.
 
 Type `C-c C-d C-c` to kill the URL (i.e. copy it to the clipboard) for the documentation page rather than directly open it in the browser.
 
+You can also type `C-c C-d C-r` to insert a comment containing a link to
+this documentation right above the resource or data block.
+
 ## Customize Variables
 
 #### `terraform-indent-level`(Default: `2`)
