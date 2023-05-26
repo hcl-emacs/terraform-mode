@@ -270,10 +270,7 @@
     (goto-char (line-beginning-position))
     (unless (looking-at-p "^resource\\|^data")
       (re-search-backward "^resource\\|^data" nil t))
-    (let (doc-dir)
-      (if (equal (word-at-point) "data")
-          (setq doc-dir "data-sources")
-          (setq doc-dir "resources"))
+    (let ((doc-dir (if (equal (word-at-point) "data") "data-sources" "resources")))
       (forward-symbol 2)
       (terraform--resource-url (thing-at-point 'symbol) doc-dir))))
 
