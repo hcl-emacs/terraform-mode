@@ -47,6 +47,8 @@ folds-or-indents.  It is not bound by default, but you can bind it to
 Within a `resource` or a `data` block, type `C-c C-d C-w` to open a new
 browser tab with the resource or data documentation page.
 
+Type `C-c C-d C-c` to kill the URL (i.e. copy it to the clipboard) for the documentation page rather than directly open it in the browser.
+
 ## Customize Variables
 
 #### `terraform-indent-level`(Default: `2`)
