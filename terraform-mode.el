@@ -316,7 +316,7 @@ If the point is not at the heading, call
 
 (defvar terraform-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-c C-h") #'terraform-open-doc)
+    (define-key map (kbd "C-c C-d C-w") #'terraform-open-doc)
     (define-key map (kbd "C-c C-f") #'outline-toggle-children)
     map))
 
