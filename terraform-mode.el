@@ -279,6 +279,13 @@
   (interactive)
   (browse-url (terraform--resource-url-at-point)))
 
+(defun terraform-kill-doc-url ()
+  "Kill the URL documenting the resource at point (i.e. copy it to the clipboard)."
+  (interactive)
+  (let* ((url (substring-no-properties (terraform--resource-url-at-point))))
+    (kill-new url)
+    (message "Copied URL: %s" url)))
+
 (defun terraform--outline-level ()
   "Return the depth to which a statement is nested in the outline.
 
@@ -317,6 +324,7 @@ If the point is not at the heading, call
 (defvar terraform-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c C-d C-w") #'terraform-open-doc)
+    (define-key map (kbd "C-c C-d C-c") #'terraform-kill-doc-url)
     (define-key map (kbd "C-c C-f") #'outline-toggle-children)
     map))
 
