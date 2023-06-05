@@ -44,7 +44,7 @@ folds-or-indents.  It is not bound by default, but you can bind it to
 
 ### Access to Terraform resource documentation
 
-Within a `resource` or a `data` block, type `C-c C-h` to open a new
+Within a `resource` or a `data` block, type `C-c C-d C-w` to open a new
 browser tab with the resource or data documentation page.
 
 ## Customize Variables
