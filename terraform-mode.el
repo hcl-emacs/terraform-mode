@@ -290,9 +290,10 @@
   "Insert a comment containing an URL documenting the resource at point."
   (interactive)
   (let ((doc-url (terraform--resource-url-at-point)))
-    (unless (looking-at-p "^resource\\|^data")
-      (re-search-backward "^resource\\|^data" nil t))
-    (insert (format "# %s\n" doc-url))))
+    (save-excursion
+      (unless (looking-at-p "^resource\\|^data")
+        (re-search-backward "^resource\\|^data" nil t))
+      (insert (format "# %s\n" doc-url)))))
 
 (defun terraform--outline-level ()
   "Return the depth to which a statement is nested in the outline.
