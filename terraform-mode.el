@@ -286,6 +286,15 @@
     (kill-new url)
     (message "Copied URL: %s" url)))
 
+(defun terraform-insert-doc-in-comment ()
+  "Insert a comment containing an URL documenting the resource at point."
+  (interactive)
+  (let ((doc-url (terraform--resource-url-at-point)))
+    (save-excursion
+      (unless (looking-at-p "^resource\\|^data")
+        (re-search-backward "^resource\\|^data" nil t))
+      (insert (format "# %s\n" doc-url)))))
+
 (defun terraform--outline-level ()
   "Return the depth to which a statement is nested in the outline.
 
@@ -325,6 +334,7 @@ If the point is not at the heading, call
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c C-d C-w") #'terraform-open-doc)
     (define-key map (kbd "C-c C-d C-c") #'terraform-kill-doc-url)
+    (define-key map (kbd "C-c C-d C-r") #'terraform-insert-doc-in-comment)
     (define-key map (kbd "C-c C-f") #'outline-toggle-children)
     map))
 

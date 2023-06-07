@@ -126,6 +126,21 @@ data \"aws_subnets\" \"example\" {
     (cl-letf (((symbol-function 'terraform--get-resource-provider-namespace) (lambda (prov) "hashicorp")))
       (should (equal (terraform--resource-url-at-point) "https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets")))))
 
+(ert-deftest command--add-comment-doc--at-data-resource-def-line ()
+  (with-terraform-temp-buffer
+    "
+data \"aws_subnets\" \"example\" {
+  filter {
+    name   = \"vpc-id\"
+    values = [var.vpc_id]
+  }
+}
+"
+    (forward-cursor-on "filter")
+    (cl-letf (((symbol-function 'terraform--get-resource-provider-namespace) (lambda (prov) "hashicorp")))
+      (terraform-insert-doc-in-comment)
+      (should (equal (search-backward "# https://registry") 2)))))
+
 (ert-deftest command--open-doc--in-body ()
   (with-terraform-temp-buffer
     "
