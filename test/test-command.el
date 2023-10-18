@@ -195,7 +195,7 @@ terraform {
   }
 }
 "
-   (should (equal (terraform--get-resource-provider-source "aws") "hashicorp/aws"))))
+   (should (equal (terraform--get-resource-provider-source "aws" "test/fixtures") "hashicorp/aws"))))
 
 ;; required_providers is defined in another file
 (ert-deftest command--terraform--get-resource-provider-source-provider-in-file ()
