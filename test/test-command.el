@@ -156,7 +156,7 @@ resource \"elasticstack_elasticsearch_security_user\" \"filebeat_writer\" {
     (cl-letf (((symbol-function 'terraform--get-resource-provider-namespace) (lambda (prov) "elastic")))
       (should (equal (terraform--resource-url-at-point) "https://registry.terraform.io/providers/elastic/elasticstack/latest/docs/resources/elasticsearch_security_user")))))
 
-(ert-deftest command--terraform--get-resource-provider-namespace ()
+(ert-deftest command--terraform--get-resource-provider-source-in-buffer ()
   (with-terraform-temp-buffer
    "
 # blah blah
@@ -176,5 +176,25 @@ terraform {
    (should (equal (terraform--get-resource-provider-source-in-buffer "azurerm") "hashicorp/azurerm"))
    (should (equal (terraform--get-resource-provider-source-in-buffer "plop") nil))
    (should (equal (terraform--get-resource-provider-source-in-buffer "aws") "hashicorp/aws"))))
+
+;; required_providers is defined in current buffer
+(ert-deftest command--terraform--get-resource-provider-source ()
+  (with-terraform-temp-buffer
+   "
+# blah blah
+terraform {
+  required_providers {
+    aws = {
+      source  = \"hashicorp/aws\"
+      version = \"~> 5\"
+    }
+    azurerm = {
+      source  = \"hashicorp/azurerm\"
+      version = \"~> 3.47\"
+    }
+  }
+}
+"
+   (should (equal (terraform--get-resource-provider-source "aws") "hashicorp/aws"))))
 
 ;;; test-command.el ends here

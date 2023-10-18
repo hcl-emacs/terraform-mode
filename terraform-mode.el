@@ -252,6 +252,12 @@
       (when (re-search-forward (concat "/\\(.*?\\)/" provider "\\]") nil t)
         (match-string 1)))))
 
+(defun terraform--get-resource-provider-source (provider)
+  "Return provider source for PROVIDER."
+  (goto-char (point-min))
+  (let (( source (terraform--get-resource-provider-source-in-buffer provider)))
+    (if source source)))
+
 (defun terraform--get-resource-provider-source-in-buffer (provider)
   "Search and return provider namespace for PROVIDER in current buffer.  Return nil if not found."
   (goto-char (point-min))
