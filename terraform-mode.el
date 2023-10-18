@@ -252,11 +252,18 @@
       (when (re-search-forward (concat "/\\(.*?\\)/" provider "\\]") nil t)
         (match-string 1)))))
 
-(defun terraform--get-resource-provider-source (provider)
-  "Return provider source for PROVIDER."
+(defun terraform--get-resource-provider-source (provider &optional dir)
+  "Return provider source for PROVIDER located in DIR."
   (goto-char (point-min))
-  (let (( source (terraform--get-resource-provider-source-in-buffer provider)))
-    (if source source)))
+  (let ((source) (file) (file_path))
+    (setq source (terraform--get-resource-provider-source-in-buffer provider))
+    (if (= (length source) 0)
+        (with-temp-buffer
+          (setq file "provider.tf")
+          (setq file_path (if dir (concat dir "/" file) file))
+          (insert-file-contents file_path)
+          (setq source (terraform--get-resource-provider-source-in-buffer provider))))
+    source))
 
 (defun terraform--get-resource-provider-source-in-buffer (provider)
   "Search and return provider namespace for PROVIDER in current buffer.  Return nil if not found."
