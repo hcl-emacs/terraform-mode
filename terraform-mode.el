@@ -252,6 +252,15 @@
       (when (re-search-forward (concat "/\\(.*?\\)/" provider "\\]") nil t)
         (match-string 1)))))
 
+(defun terraform--get-resource-provider-source-in-buffer (provider)
+  "Search and return provider namespace for PROVIDER in current buffer.  Return nil if not found."
+  (goto-char (point-min))
+  (if (and (re-search-forward "^terraform[[:blank:]]*{" nil t)
+           (re-search-forward "^[[:blank:]]*required_providers[[:blank:]]*{" nil t)
+           (re-search-forward (concat "^[[:blank:]]*" provider "[[:blank:]]*=[[:blank:]]*{") nil t)
+           (re-search-forward "^[[:blank:]]*source[[:blank:]]*=[[:blank:]]*\"\\([a-z/]+\\)\"" nil t))
+      (match-string 1)))
+
 (defun terraform--resource-url (resource doc-dir)
   "Return the url containing the documentation for RESOURCE using DOC-DIR."
   (let* ((provider (terraform--extract-provider resource))
