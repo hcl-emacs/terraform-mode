@@ -256,9 +256,14 @@
   "Return provider source for PROVIDER located in DIR."
   (goto-char (point-min))
   (let ((source) (file) (file_path) (tf_files))
+    ;; find current directory if not specified
+    (if (and (not dir) buffer-file-name) (setq dir (file-name-directory buffer-file-name)))
+    ;; try to find provider source in current buffer
     (setq source (terraform--get-resource-provider-source-in-buffer provider))
-    (if (= (length source) 0)
+    (if (and (= (length source) 0) dir)
+        ;; no source found ? find tf files to open
         (setq tf_files (directory-files dir nil "\\.tf$")))
+    ;; try to find provider source in terraform files
     (while (and (= (length source) 0) tf_files)
         (with-temp-buffer
           (setq file (pop tf_files))
@@ -279,15 +284,22 @@
 (defun terraform--resource-url (resource doc-dir)
   "Return the url containing the documentation for RESOURCE using DOC-DIR."
   (let* ((provider (terraform--extract-provider resource))
-         (provider-ns (terraform--get-resource-provider-namespace provider))
+         (provider-source
+          ;; search provider source in terraform files
+          (terraform--get-resource-provider-source provider))
          (resource-name (terraform--extract-resource resource)))
-    (if provider-ns
-        (format "https://registry.terraform.io/providers/%s/%s/latest/docs/%s/%s"
-                provider-ns
-                provider
+    (if (= (length provider-source) 0)
+        ;; fallback to old method with terraform providers command
+        (setq provider-source
+              (concat
+               (terraform--get-resource-provider-namespace provider)
+               "/" provider)))
+    (if (> (length provider-source) 0)
+        (format "https://registry.terraform.io/providers/%s/latest/docs/%s/%s"
+                provider-source
                 doc-dir
                 resource-name)
-      (user-error "Can not determine the provider namespace for %s" provider))))
+      (user-error "Can not determine the provider source for %s" provider))))
 
 (defun terraform--resource-url-at-point ()
   (save-excursion
