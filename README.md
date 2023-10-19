@@ -52,6 +52,13 @@ Type `C-c C-d C-c` to kill the URL (i.e. copy it to the clipboard) for the docum
 You can also type `C-c C-d C-r` to insert a comment containing a link to
 this documentation right above the resource or data block.
 
+This feature requires either:
+
+- a `required_provider` declaration in any `.tf` file in current directory
+  (see [Terraform doc](https://developer.hashicorp.com/terraform/language/providers/requirements#requiring-providers))
+- a working `terraform providers` command. This command may require a
+  valid token (at least for AWS).
+
 ## Customize Variables
 
 #### `terraform-indent-level`(Default: `2`)
