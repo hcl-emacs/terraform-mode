@@ -265,8 +265,8 @@ The DIR parameter is optional and used only for tests."
     (if (and (not dir) buffer-file-name) (setq dir (file-name-directory buffer-file-name)))
     ;; try to find provider source in current buffer
     (setq source (terraform--get-resource-provider-source-in-buffer provider))
-    (if (and (= (length source) 0) dir)
-        ;; no source found ? find tf files to open
+    (when (and (= (length source) 0) dir)
+        ;; no provider source found ? find tf files to open
         (setq tf-files (directory-files dir nil "\\.tf$")))
     ;; try to find provider source in terraform files
     (while (and (= (length source) 0) tf-files)
@@ -289,21 +289,17 @@ The DIR parameter is optional and used only for tests."
 (defun terraform--resource-url (resource doc-dir)
   "Return the url containing the documentation for RESOURCE using DOC-DIR."
   (let* ((provider (terraform--extract-provider resource))
-         (provider-source
           ;; search provider source in terraform files
-          (terraform--get-resource-provider-source provider))
+         (provider-source (terraform--get-resource-provider-source provider))
          (resource-name (terraform--extract-resource resource)))
-    (if (= (length provider-source) 0)
+    (when (= (length provider-source) 0)
         ;; fallback to old method with terraform providers command
-        (setq provider-source
-              (concat
-               (terraform--get-resource-provider-namespace provider)
-               "/" provider)))
+      (setq provider-source (concat
+                             (terraform--get-resource-provider-namespace provider)
+                             "/" provider)))
     (if (> (length provider-source) 0)
         (format "https://registry.terraform.io/providers/%s/latest/docs/%s/%s"
-                provider-source
-                doc-dir
-                resource-name)
+                provider-source doc-dir resource-name)
       (user-error "Can not determine the provider source for %s" provider))))
 
 (defun terraform--resource-url-at-point ()
