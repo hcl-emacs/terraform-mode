@@ -255,20 +255,20 @@
 (defun terraform--get-resource-provider-source (provider &optional dir)
   "Return provider source for PROVIDER located in DIR."
   (goto-char (point-min))
-  (let ((source) (file) (file_path) (tf_files))
-    ;; find current directory if not specified
+  (let ((source) (file) (file-path) (tf-files))
+    ;; find current directory if it's not specified in arguments
     (if (and (not dir) buffer-file-name) (setq dir (file-name-directory buffer-file-name)))
     ;; try to find provider source in current buffer
     (setq source (terraform--get-resource-provider-source-in-buffer provider))
     (if (and (= (length source) 0) dir)
         ;; no source found ? find tf files to open
-        (setq tf_files (directory-files dir nil "\\.tf$")))
+        (setq tf-files (directory-files dir nil "\\.tf$")))
     ;; try to find provider source in terraform files
-    (while (and (= (length source) 0) tf_files)
+    (while (and (= (length source) 0) tf-files)
         (with-temp-buffer
-          (setq file (pop tf_files))
-          (setq file_path (if dir (concat dir "/" file) file))
-          (insert-file-contents file_path)
+          (setq file (pop tf-files))
+          (setq file-path (if dir (concat dir "/" file) file))
+          (insert-file-contents file-path)
           (setq source (terraform--get-resource-provider-source-in-buffer provider))))
     source))
 
