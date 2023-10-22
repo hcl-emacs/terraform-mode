@@ -253,7 +253,12 @@
         (match-string 1)))))
 
 (defun terraform--get-resource-provider-source (provider &optional dir)
-  "Return provider source for PROVIDER located in DIR."
+  "Return Terraform provider source for PROVIDER located in DIR.
+Terraform provider source is searched in 'required_provider' declaration
+in current buffer or in other Terraform files located in the same directory
+of the file of current buffer.  If still not found, the provider source is
+searched by running command 'terraform providers'.
+The DIR parameter is optional and used only for tests."
   (goto-char (point-min))
   (let (source file file-path tf-files)
     ;; find current directory if it's not specified in arguments
