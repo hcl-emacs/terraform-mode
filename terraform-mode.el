@@ -255,7 +255,7 @@
 (defun terraform--get-resource-provider-source (provider &optional dir)
   "Return provider source for PROVIDER located in DIR."
   (goto-char (point-min))
-  (let ((source) (file) (file-path) (tf-files))
+  (let (source file file-path tf-files)
     ;; find current directory if it's not specified in arguments
     (if (and (not dir) buffer-file-name) (setq dir (file-name-directory buffer-file-name)))
     ;; try to find provider source in current buffer
