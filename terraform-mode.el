@@ -260,22 +260,25 @@ of the file of current buffer.  If still not found, the provider source is
 searched by running command 'terraform providers'.
 The DIR parameter is optional and used only for tests."
   (goto-char (point-min))
-  (let (source file file-path tf-files)
-    ;; find current directory if it's not specified in arguments
-    (if (and (not dir) buffer-file-name) (setq dir (file-name-directory buffer-file-name)))
-    ;; try to find provider source in current buffer
-    (setq source (terraform--get-resource-provider-source-in-buffer provider))
-    (when (and (= (length source) 0) dir)
-        ;; no provider source found ? find tf files to open
+  ;; find current directory if it's not specified in arguments
+  (if (and (not dir) buffer-file-name) (setq dir (file-name-directory buffer-file-name)))
+  (let (tf-files
+        ;; try to find provider source in current buffer
+        (provider-source (terraform--get-resource-provider-source-in-buffer provider)))
+    ;; check if terraform provider-source was found
+    (when (and (= (length provider-source) 0) dir)
+        ;; find all terraform files of this project. One of them
+        ;; should contain required_provider declaration
         (setq tf-files (directory-files dir nil "\\.tf$")))
-    ;; try to find provider source in terraform files
-    (while (and (= (length source) 0) tf-files)
+    ;; iterate on terraform files until a provider source is found
+    (while (and (= (length provider-source) 0) tf-files)
         (with-temp-buffer
-          (setq file (pop tf-files))
-          (setq file-path (if dir (concat dir "/" file) file))
-          (insert-file-contents file-path)
-          (setq source (terraform--get-resource-provider-source-in-buffer provider))))
-    source))
+          (let* ((file (pop tf-files))
+                 (file-path (if dir (concat dir "/" file) file)))
+            (insert-file-contents file-path)
+            ;; look for provider source in a terraform file
+            (setq provider-source (terraform--get-resource-provider-source-in-buffer provider)))))
+    provider-source))
 
 (defun terraform--get-resource-provider-source-in-buffer (provider)
   "Search and return provider namespace for PROVIDER in current buffer.  Return nil if not found."
