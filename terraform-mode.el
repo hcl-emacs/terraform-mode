@@ -77,6 +77,9 @@
   "Face for varriables."
   :group 'terraform-mode)
 
+(defconst terraform--constants-regexp
+  (concat "\\(?:^\\|[^.]\\)" (regexp-opt '("null") 'words)))
+
 (defconst terraform--block-builtins-without-name-or-type-regexp
   (rx line-start
       (zero-or-more space)
@@ -154,6 +157,7 @@
      (1 'terraform-builtin-face)
      (2 'terraform-resource-type-face t)
      (3 'terraform-resource-name-face t))
+    (,terraform--constants-regexp 1 'font-lock-constant-face)
     ,@hcl-font-lock-keywords))
 
 (defun terraform-format-buffer ()
