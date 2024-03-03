@@ -269,7 +269,7 @@ The DIR parameter is optional and used only for tests."
     (when (and (= (length provider-source) 0) dir)
         ;; find all terraform files of this project. One of them
         ;; should contain required_provider declaration
-        (setq tf-files (directory-files dir nil "\\.tf$")))
+        (setq tf-files (directory-files dir nil "^[[:alnum:][:blank:]_.-]+\\.tf$")))
     ;; iterate on terraform files until a provider source is found
     (while (and (= (length provider-source) 0) tf-files)
         (with-temp-buffer
