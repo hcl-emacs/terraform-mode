@@ -258,10 +258,10 @@
 
 (defun terraform--get-resource-provider-source (provider &optional dir)
   "Return Terraform provider source for PROVIDER located in DIR.
-Terraform provider source is searched in 'required_provider' declaration
+Terraform provider source is searched in `required_provider' declaration
 in current buffer or in other Terraform files located in the same directory
 of the file of current buffer.  If still not found, the provider source is
-searched by running command 'terraform providers'.
+searched by running command `terraform providers'.
 The DIR parameter is optional and used only for tests."
   (goto-char (point-min))
   ;; find current directory if it's not specified in arguments
@@ -285,7 +285,8 @@ The DIR parameter is optional and used only for tests."
     provider-source))
 
 (defun terraform--get-resource-provider-source-in-buffer (provider)
-  "Search and return provider namespace for PROVIDER in current buffer.  Return nil if not found."
+  "Search and return provider namespace for PROVIDER in current buffer.
+Return nil if not found."
   (goto-char (point-min))
   (if (and (re-search-forward "^terraform[[:blank:]]*{" nil t)
            (re-search-forward "^[[:blank:]]*required_providers[[:blank:]]*{" nil t)
