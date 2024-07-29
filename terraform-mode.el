@@ -404,7 +404,7 @@ If the point is not at the heading, call
   (imenu-add-to-menubar "Terraform"))
 
 ;;;###autoload
-(add-to-list 'auto-mode-alist '("\\.tf\\(vars\\)?\\'" . terraform-mode))
+(add-to-list 'auto-mode-alist '(".\\(tf\\(vars\\)?\\|tofu\\)'". terraform-mode))
 
 (provide 'terraform-mode)
 
