@@ -77,6 +77,9 @@
   "Face for varriables."
   :group 'terraform-mode)
 
+(defconst terraform--constants-regexp
+  (concat "\\(?:^\\|[^.]\\)" (regexp-opt '("null") 'words)))
+
 (defconst terraform--block-builtins-without-name-or-type-regexp
   (rx line-start
       (zero-or-more space)
@@ -154,6 +157,7 @@
      (1 'terraform-builtin-face)
      (2 'terraform-resource-type-face t)
      (3 'terraform-resource-name-face t))
+    (,terraform--constants-regexp 1 'font-lock-constant-face)
     ,@hcl-font-lock-keywords))
 
 (defun terraform-format-buffer ()
@@ -252,18 +256,59 @@
       (when (re-search-forward (concat "/\\(.*?\\)/" provider "\\]") nil t)
         (match-string 1)))))
 
+(defun terraform--get-resource-provider-source (provider &optional dir)
+  "Return Terraform provider source for PROVIDER located in DIR.
+Terraform provider source is searched in `required_provider' declaration
+in current buffer or in other Terraform files located in the same directory
+of the file of current buffer.  If still not found, the provider source is
+searched by running command `terraform providers'.
+The DIR parameter is optional and used only for tests."
+  (goto-char (point-min))
+  ;; find current directory if it's not specified in arguments
+  (if (and (not dir) buffer-file-name) (setq dir (file-name-directory buffer-file-name)))
+  (let (tf-files
+        ;; try to find provider source in current buffer
+        (provider-source (terraform--get-resource-provider-source-in-buffer provider)))
+    ;; check if terraform provider-source was found
+    (when (and (= (length provider-source) 0) dir)
+        ;; find all terraform files of this project. One of them
+        ;; should contain required_provider declaration
+        (setq tf-files (directory-files dir nil "^[[:alnum:][:blank:]_.-]+\\.tf$")))
+    ;; iterate on terraform files until a provider source is found
+    (while (and (= (length provider-source) 0) tf-files)
+        (with-temp-buffer
+          (let* ((file (pop tf-files))
+                 (file-path (if dir (concat dir "/" file) file)))
+            (insert-file-contents file-path)
+            ;; look for provider source in a terraform file
+            (setq provider-source (terraform--get-resource-provider-source-in-buffer provider)))))
+    provider-source))
+
+(defun terraform--get-resource-provider-source-in-buffer (provider)
+  "Search and return provider namespace for PROVIDER in current buffer.
+Return nil if not found."
+  (goto-char (point-min))
+  (if (and (re-search-forward "^terraform[[:blank:]]*{" nil t)
+           (re-search-forward "^[[:blank:]]*required_providers[[:blank:]]*{" nil t)
+           (re-search-forward (concat "^[[:blank:]]*" provider "[[:blank:]]*=[[:blank:]]*{") nil t)
+           (re-search-forward "^[[:blank:]]*source[[:blank:]]*=[[:blank:]]*\"\\([a-z/]+\\)\"" nil t))
+      (match-string 1)))
+
 (defun terraform--resource-url (resource doc-dir)
   "Return the url containing the documentation for RESOURCE using DOC-DIR."
   (let* ((provider (terraform--extract-provider resource))
-         (provider-ns (terraform--get-resource-provider-namespace provider))
+          ;; search provider source in terraform files
+         (provider-source (terraform--get-resource-provider-source provider))
          (resource-name (terraform--extract-resource resource)))
-    (if provider-ns
-        (format "https://registry.terraform.io/providers/%s/%s/latest/docs/%s/%s"
-                provider-ns
-                provider
-                doc-dir
-                resource-name)
-      (user-error "Can not determine the provider namespace for %s" provider))))
+    (when (= (length provider-source) 0)
+        ;; fallback to old method with terraform providers command
+      (setq provider-source (concat
+                             (terraform--get-resource-provider-namespace provider)
+                             "/" provider)))
+    (if (> (length provider-source) 0)
+        (format "https://registry.terraform.io/providers/%s/latest/docs/%s/%s"
+                provider-source doc-dir resource-name)
+      (user-error "Can not determine the provider source for %s" provider))))
 
 (defun terraform--resource-url-at-point ()
   (save-excursion
@@ -359,7 +404,7 @@ If the point is not at the heading, call
   (imenu-add-to-menubar "Terraform"))
 
 ;;;###autoload
-(add-to-list 'auto-mode-alist '("\\.tf\\(vars\\)?\\'" . terraform-mode))
+(add-to-list 'auto-mode-alist '("\\.t\\(f\\(vars\\)?\\|ofu\\)\\'" . terraform-mode))
 
 (provide 'terraform-mode)
 

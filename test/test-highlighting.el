@@ -32,6 +32,14 @@
       keyword
       (should (face-at-cursor-p 'font-lock-constant-face)))))
 
+(ert-deftest font-lock--constants-keywords ()
+  "Syntax highlight of constant keywords"
+
+  (dolist (keyword '("null"))
+    (with-terraform-temp-buffer
+      keyword
+      (should (face-at-cursor-p 'font-lock-constant-face)))))
+
 (ert-deftest font-lock--provider-block--with-one-space ()
   "Syntax highlight of `provider' block."
 
