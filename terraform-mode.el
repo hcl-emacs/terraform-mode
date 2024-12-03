@@ -51,6 +51,11 @@
   :type 'boolean
   :group 'terraform-mode)
 
+(defcustom terraform-command "terraform"
+  "Command used to invoke terraform"
+  :type 'string
+  :group 'terraform-mode)
+
 (defface terraform-resource-type-face
   '((t :inherit font-lock-type-face))
   "Face for resource names."
@@ -165,7 +170,7 @@
   (interactive)
   (let ((buf (get-buffer-create "*terraform-fmt*")))
     (if (zerop (call-process-region (point-min) (point-max)
-                                    "terraform" nil buf nil "fmt" "-no-color" "-"))
+                                    terraform-command nil buf nil "fmt" "-no-color" "-"))
         (let ((point (point))
               (window-start (window-start)))
           (erase-buffer)
@@ -183,7 +188,7 @@
   (let ((buf (get-buffer-create "*terraform-fmt*")))
     (when (use-region-p)
     (if (zerop (call-process-region (region-beginning) (region-end)
-                                    "terraform" nil buf nil "fmt" "-"))
+                                    terraform-command nil buf nil "fmt" "-"))
         (let ((point (region-end))
               (window-start (region-beginning)))
           (delete-region window-start point)
@@ -249,7 +254,7 @@
 
 (defun terraform--get-resource-provider-namespace (provider)
   "Return provider namespace for PROVIDER."
-  (let ((provider-info (shell-command-to-string "terraform providers")))
+  (let ((provider-info (shell-command-to-string (concat terraform-command " providers"))))
     (with-temp-buffer
       (insert provider-info)
       (goto-char (point-min))
