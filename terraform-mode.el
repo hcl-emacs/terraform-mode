@@ -404,7 +404,7 @@ If the point is not at the heading, call
   (terraform--setup-outline-mode)
 
   ;; imenu
-  (setq imenu-sort-function 'imenu--sort-by-name)
+  (set (make-local-variable 'imenu-sort-function) 'imenu--sort-by-name)
   (setq imenu-create-index-function 'terraform--generate-imenu)
   (imenu-add-to-menubar "Terraform"))
 
