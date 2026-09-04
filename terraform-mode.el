@@ -56,6 +56,19 @@
   :type 'string
   :group 'terraform-mode)
 
+(defcustom terraform-show-fmt-errors 'echo
+  "Where to display terraform fmt error output.
+It can either be displayed in its own buffer, in the echo area, or not at all.
+
+Please note that Emacs outputs to the echo area when writing
+files and will overwrite terraform fmt's echo output if used from inside
+a `before-save-hook'."
+  :type '(choice
+          (const :tag "Own buffer" buffer)
+          (const :tag "Echo area" echo)
+          (const :tag "None" nil))
+  :group 'terraform-mode)
+
 (defface terraform-resource-type-face
   '((t :inherit font-lock-type-face))
   "Face for resource names."
@@ -169,6 +182,9 @@
   "Rewrite current buffer in a canonical format using terraform fmt."
   (interactive)
   (let ((buf (get-buffer-create "*terraform-fmt*")))
+    (with-current-buffer buf
+      (setq buffer-read-only nil)
+      (erase-buffer))
     (if (zerop (call-process-region (point-min) (point-max)
                                     terraform-command nil buf nil "fmt" "-no-color" "-"))
         (let ((point (point))
@@ -178,9 +194,13 @@
           (when (/= terraform-indent-level 2)
             (indent-region (point-min) (point-max)))
           (goto-char point)
-          (set-window-start nil window-start))
-      (message "terraform fmt: %s" (with-current-buffer buf (buffer-string))))
-    (kill-buffer buf)))
+          (set-window-start nil window-start)
+          (kill-buffer buf))
+      (if (eq terraform-show-fmt-errors 'buffer)
+          (display-buffer buf)
+        (if (eq terraform-show-fmt-errors 'echo)
+            (message "terraform fmt: %s" (with-current-buffer buf (buffer-string))))
+        (kill-buffer buf)))))
 
 (defun terraform-format-region ()
   "Rewrite current region in a canonical format using terraform fmt."
